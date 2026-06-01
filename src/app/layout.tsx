@@ -1,21 +1,19 @@
-import type { Metadata } from "next";
-import Providers from "./providers";
+import Providers from "./Providers";
+import MainLayout from "@/components/layout/MainLayout";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "HIS Common Frontend",
-  description: "Hospital common menu / role / user domain frontend",
-};
-
+/** Next.js App Router 루트 레이아웃 — Providers + 고정 Sidebar/Nav 셸 */
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="ko">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <MainLayout>{children}</MainLayout>
+        </Providers>
       </body>
     </html>
   );

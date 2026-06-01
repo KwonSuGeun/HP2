@@ -1,46 +1,69 @@
-* {
-  box-sizing: border-box;
+@import "tailwindcss";
+
+:root {
+  --bg: #eef3f7;
+  --panel: #ffffff;
+  --panel-soft: #f6f9fc;
+  --ink: #1b2430;
+  --muted: #6a7b8c;
+  --line: #d9e3ee;
+  --brand: #0b5b8f;
+  --brand-strong: #0a3e62;
+  --brand-soft: rgba(11, 91, 143, 0.12);
+  --accent: #d97706;
+  --shadow-1: 0 12px 24px rgba(9, 37, 63, 0.12);
+  --shadow-2: 0 14px 28px rgba(9, 37, 63, 0.16);
+}
+
+@theme inline {
+  --color-background: var(--panel);
+  --color-foreground: var(--ink);
+  --font-sans: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo",
+    "Malgun Gothic", sans-serif;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
-  font-family: "Pretendard Variable", "Pretendard", "Segoe UI", "Apple SD Gothic Neo",
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo",
     "Malgun Gothic", sans-serif;
-  color: #1a2b3c;
-  background-color: #eef4fb;
-  background-image:
-    radial-gradient(ellipse 120% 80% at 100% 0%, rgba(61, 143, 196, 0.14), transparent 55%),
-    radial-gradient(ellipse 90% 60% at 0% 100%, rgba(11, 91, 143, 0.08), transparent 50%),
-    linear-gradient(165deg, #eef4fb 0%, #f8fafc 48%, #e3edf7 100%);
-  background-attachment: fixed;
-  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
 }
 
-::selection {
-  background: rgba(11, 91, 143, 0.2);
-  color: #0f2942;
+.MuiPaper-root,
+.MuiCard-root {
+  border-radius: 12px !important;
 }
 
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+.MuiButton-root {
+  border-radius: 10px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
 }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
+.MuiChip-root {
+  border-radius: 999px !important;
+  font-weight: 700 !important;
 }
 
-*::-webkit-scrollbar-thumb {
-  background: rgba(15, 41, 66, 0.18);
-  border-radius: 99px;
+.MuiInputBase-root {
+  font-size: 14px !important;
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 41, 66, 0.28);
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
