@@ -1,0 +1,21 @@
+/** HIS UI 색상·그림자·모서리 (인증 토큰과 무관) */
+export const hisColors = {
+  primary: "#0b5b8f",
+  primaryDark: "#07476f",
+  primaryLight: "#3d8fc4",
+  primaryGlow: "rgba(11, 91, 143, 0.18)",
+  navy: "#0f2942",
+  navySoft: "#1a3a5c",
+  muted: "#5c6f82",
+  text: "#1a2b3c",
+  line: "rgba(15, 40, 80, 0.10)",
+  surface: "#ffffff",
+  surfaceMuted: "#f4f8fc",
+  pageBg: "#eef4fb",
+  pageBgAccent: "#e3edf7",
+  shadowSm: "0 4px 14px rgba(15, 40, 80, 0.06)",
+  shadowMd: "0 12px 40px rgba(15, 40, 80, 0.10)",
+  shadowSidebar: "4px 0 24px rgba(15, 40, 80, 0.06)",
+  radiusLg: 16,
+  radiusMd: 12,
+} as const;
