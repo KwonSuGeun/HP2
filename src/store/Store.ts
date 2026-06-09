@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
+import accountReducer from "@/features/accounts/AccountSlice";
 import navReducer from "@/features/nav/NavSlice";
 import sidebarReducer from "@/features/sidebar/SidebarSlice";
 import rootSaga from "./RootSaga";
@@ -10,6 +11,7 @@ export const store = configureStore({
   reducer: {
     nav: navReducer,
     sidebar: sidebarReducer,
+    account: accountReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),
@@ -17,7 +19,5 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-export type RootState = {
-  nav: ReturnType<typeof navReducer>;
-  sidebar: ReturnType<typeof sidebarReducer>;
-};
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
