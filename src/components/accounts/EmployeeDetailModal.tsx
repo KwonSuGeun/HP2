@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  Grid,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -37,10 +36,10 @@ type EmployeeDetailModalProps = {
 };
 
 const DetailField = ({ label, value }: { label: string; value: string }) => (
-  <Grid size={{ xs: 12, sm: 6 }}>
+  <div>
     <Typography sx={detailFieldLabelSx}>{label}</Typography>
     <Typography sx={detailFieldValueSx}>{value || "-"}</Typography>
-  </Grid>
+  </div>
 );
 
 const LIST_STATUS_LABEL: Record<Employee["status"], string> = {
@@ -98,23 +97,23 @@ const EmployeeDetailModal = ({
         </div>
 
         <Typography sx={detailSectionTitleSx}>등록 정보</Typography>
-        <Grid container spacing={2} sx={{ mb: 2.5 }}>
+        <div className={`${styles.detailGrid} ${styles.detailGridSection}`}>
           <DetailField label="이름" value={employee.name} />
           <DetailField label="생년월일" value={employee.birthDate} />
           <DetailField label="소속 부서" value={employee.department} />
           <DetailField label="이메일" value={employee.email} />
           <DetailField label="휴대폰번호" value={employee.phoneNumber} />
           <DetailField label="면허번호" value={employee.licenseNumber} />
-          <Grid size={12}>
+          <div className={styles.detailGridColFull}>
             <Typography sx={detailFieldLabelSx}>주소</Typography>
             <Typography sx={detailFieldValueSx}>{formatAddress(employee)}</Typography>
-          </Grid>
-        </Grid>
+          </div>
+        </div>
 
         <Divider sx={{ my: 2 }} />
 
         <Typography sx={detailSectionTitleSx}>시스템 자동 생성 정보</Typography>
-        <Grid container spacing={2}>
+        <div className={styles.detailGrid}>
           <DetailField label="사번 [STAFF_ID]" value={employee.employeeId} />
           <DetailField label="직군 [STAFF_TYPE]" value={STAFF_TYPE_LABEL[employee.staffType] ?? employee.staffType} />
           <DetailField label="직급 [STAFF_RANK_CODE]" value={RANK_LABEL[employee.staffRankCode] ?? employee.staffRankCode} />
@@ -123,7 +122,7 @@ const EmployeeDetailModal = ({
           <DetailField label="내선번호 [STAFF_EXTENSION_NO]" value={employee.staffExtensionNo} />
           <DetailField label="재직 상태 [STAFF_STATUS]" value={STATUS_LABEL[employee.status] ?? employee.status} />
           <DetailField label="입사일 [STAFF_HIRE_DATE]" value={employee.staffHireDate} />
-        </Grid>
+        </div>
           </>
         )}
       </DialogContent>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, ChangeEvent, KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, ChangeEvent } from "react";
 import {
   Avatar,
   Button,
@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  Grid,
   IconButton,
   MenuItem,
   Select,
@@ -143,9 +142,9 @@ const EmployeeRegisterModal = ({
       </DialogTitle>
 
       <DialogContent dividers sx={{ pt: 2 }}>
-        <Grid container spacing={3}>
+        <div className={styles.formLayout}>
           {/* 좌측: 프로필 사진 */}
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <div>
             <div className={styles.profileUploadArea}>
               <Avatar src={form.profileImage ?? undefined} sx={profileAvatarSx}>
                 {!form.profileImage ? <PersonOutlinedIcon sx={{ fontSize: 48 }} /> : null}
@@ -168,12 +167,12 @@ const EmployeeRegisterModal = ({
               </Button>
               <Typography sx={formFieldHintSx}>선택사항</Typography>
             </div>
-          </Grid>
+          </div>
 
           {/* 우측: 입력 필드 */}
-          <Grid size={{ xs: 12, sm: 9 }}>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
+          <div>
+            <div className={styles.formGrid}>
+              <div>
                 <FieldLabel label="사번" required />
                 <TextField
                   fullWidth
@@ -184,9 +183,9 @@ const EmployeeRegisterModal = ({
                   helperText={errors.employeeId}
                   onChange={(event) => updateField("employeeId", event.target.value)}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="비밀번호" required />
                 <TextField
                   fullWidth
@@ -197,9 +196,9 @@ const EmployeeRegisterModal = ({
                   helperText={errors.password}
                   onChange={(event) => updateField("password", event.target.value)}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="소속 부서" required />
                 <FormControl fullWidth size="small" error={!!errors.departmentId}>
                   <Select
@@ -222,9 +221,9 @@ const EmployeeRegisterModal = ({
                     </Typography>
                   ) : null}
                 </FormControl>
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="이름" required />
                 <TextField
                   fullWidth
@@ -235,9 +234,9 @@ const EmployeeRegisterModal = ({
                   helperText={errors.name}
                   onChange={(event) => updateField("name", event.target.value)}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="생년월일" required />
                 <TextField
                   fullWidth
@@ -249,9 +248,9 @@ const EmployeeRegisterModal = ({
                   onChange={(event) => updateField("birthDate", event.target.value)}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="이메일" />
                 <TextField
                   fullWidth
@@ -261,9 +260,9 @@ const EmployeeRegisterModal = ({
                   onChange={(event) => updateField("email", event.target.value)}
                 />
                 <Typography sx={formFieldHintSx}>선택</Typography>
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="휴대폰번호" required />
                 <TextField
                   fullWidth
@@ -274,9 +273,9 @@ const EmployeeRegisterModal = ({
                   helperText={errors.phoneNumber}
                   onChange={(event) => updateField("phoneNumber", event.target.value)}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <div>
                 <FieldLabel label="면허번호" />
                 <TextField
                   fullWidth
@@ -287,13 +286,13 @@ const EmployeeRegisterModal = ({
                   helperText={errors.licenseNumber ?? "의사/간호사만 필수"}
                   onChange={(event) => updateField("licenseNumber", event.target.value)}
                 />
-              </Grid>
+              </div>
 
-              <Grid size={12}>
+              <div className={styles.formGridColFull}>
                 <FieldLabel label="주소" required />
                 <div className={styles.addressSection}>
-                  <Grid container spacing={1.5}>
-                    <Grid size={{ xs: 12, sm: 4 }}>
+                  <div className={styles.addressGrid}>
+                    <div>
                       <Typography sx={{ ...formLabelSx, fontSize: 11 }}>우편번호</Typography>
                       <TextField
                         fullWidth
@@ -303,8 +302,8 @@ const EmployeeRegisterModal = ({
                         slotProps={{ input: { readOnly: true } }}
                         sx={{ "& .MuiInputBase-input": { bgcolor: "rgba(0,0,0,0.02)" } }}
                       />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }} sx={{ display: "flex", alignItems: "flex-end" }}>
+                    </div>
+                    <div className={styles.addressButtonCol}>
                       <Button
                         variant="outlined"
                         sx={zipFindButtonSx}
@@ -312,8 +311,8 @@ const EmployeeRegisterModal = ({
                       >
                         우편번호 찾기
                       </Button>
-                    </Grid>
-                    <Grid size={12}>
+                    </div>
+                    <div className={styles.addressGridColFull}>
                       <Typography sx={{ ...formLabelSx, fontSize: 11 }}>기본주소</Typography>
                       <TextField
                         fullWidth
@@ -324,8 +323,8 @@ const EmployeeRegisterModal = ({
                         slotProps={{ input: { readOnly: true } }}
                         sx={{ "& .MuiInputBase-input": { bgcolor: "rgba(0,0,0,0.02)" } }}
                       />
-                    </Grid>
-                    <Grid size={12}>
+                    </div>
+                    <div className={styles.addressGridColFull}>
                       <Typography sx={{ ...formLabelSx, fontSize: 11 }}>상세주소 (Option)</Typography>
                       <TextField
                         fullWidth
@@ -335,20 +334,20 @@ const EmployeeRegisterModal = ({
                         inputRef={detailAddressRef}
                         onChange={(event) => updateField("detailAddress", event.target.value)}
                       />
-                    </Grid>
+                    </div>
                     {errors.baseAddress ? (
-                      <Grid size={12}>
+                      <div className={styles.addressGridColFull}>
                         <Typography sx={{ fontSize: 11, color: "error.main" }}>
                           {errors.baseAddress}
                         </Typography>
-                      </Grid>
+                      </div>
                     ) : null}
-                  </Grid>
+                  </div>
                 </div>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+              </div>
+            </div>
+          </div>
+        </div>
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2 }}>
