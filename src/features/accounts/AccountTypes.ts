@@ -98,15 +98,18 @@ export interface StaffRegisterRequest {
   staffId: string;
   staffPassword: string;
   staffName: string;
-  staffType?: string;
+  staffType: string;
   staffRoleCode?: string;
   staffDepartmentId: string;
-  staffRankCode?: string;
+  staffRankCode: string;
   staffPositionCode?: string;
   staffPhone: string;
   staffExtensionNo?: string;
   staffEmail?: string;
-  staffHireDate?: string;
+  staffHireDate: string;
   staffBirthDate: string;
   staffLicenseNo?: string;
+  addressZipCode: string;
+  addressBase: string;
+  addressDetail?: string;
 }
