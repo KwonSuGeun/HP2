@@ -41,6 +41,9 @@ export function formToStaffRegisterRequest(form: EmployeeRegisterForm): StaffReg
     staffEmail: form.email.trim() || undefined,
     staffPhone: form.phoneNumber.trim(),
     staffLicenseNo: form.licenseNumber.trim() || undefined,
+    addressZipCode: form.zipCode.trim(),
+    addressBase: form.baseAddress.trim(),
+    addressDetail: form.detailAddress.trim() || undefined,
   };
 }
 
