@@ -431,6 +431,11 @@
   background: #ffebee;
 }
 
+.modalDeleteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .modalCancelButton,
 .modalSubmitButton,
 .outlineButton {

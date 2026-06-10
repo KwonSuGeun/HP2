@@ -2,11 +2,15 @@ import { all, call, put, takeLatest } from "redux-saga/effects";
 import axios, { AxiosResponse } from "axios";
 import { PayloadAction } from "@reduxjs/toolkit";
 import {
+  deleteStaffAPI,
   fetchStaffDetailAPI,
   fetchStaffListAPI,
   registerStaffAPI,
 } from "./api";
 import {
+  deleteStaffFailure,
+  deleteStaffRequest,
+  deleteStaffSuccess,
   fetchStaffDetailFailure,
   fetchStaffDetailRequest,
   fetchStaffDetailSuccess,
@@ -20,7 +24,7 @@ import {
 import type { ApiResponse, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
 import { formToStaffRegisterRequest } from "./employeeUtils";
 import { staffDtoToEmployee } from "./staffMapper";
-import { writeStaffDetailCache } from "./staffEnrichment";
+import { writeStaffDetailCache, removeStaffDetailCache } from "./staffEnrichment";
 import {
   applyClientFilters,
   buildStaffListRequest,
@@ -83,10 +87,26 @@ function* registerStaffSaga(
   }
 }
 
+function* deleteStaffSaga(
+  action: PayloadAction<{ staffId: string; searchParams: StaffSearchParams }>,
+) {
+  try {
+    const { staffId, searchParams } = action.payload;
+    const response: AxiosResponse<ApiResponse<null>> = yield call(deleteStaffAPI, staffId);
+    assertApiSuccess(response.data);
+    removeStaffDetailCache(staffId);
+    yield put(deleteStaffSuccess());
+    yield put(fetchStaffListRequest(searchParams));
+  } catch (e) {
+    yield put(deleteStaffFailure(getErrorMessage(e, "직원 삭제에 실패했습니다.")));
+  }
+}
+
 export function* watchAccountSaga() {
   yield all([
     takeLatest(fetchStaffListRequest.type, fetchStaffListSaga),
     takeLatest(fetchStaffDetailRequest.type, fetchStaffDetailSaga),
     takeLatest(registerStaffRequest.type, registerStaffSaga),
+    takeLatest(deleteStaffRequest.type, deleteStaffSaga),
   ]);
 }

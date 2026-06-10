@@ -23,6 +23,7 @@ const initialState: AccountState = {
   listStatus: { ...initialStatus },
   detailStatus: { ...initialStatus },
   createStatus: { ...initialStatus },
+  deleteStatus: { ...initialStatus },
 };
 
 const accountSlice = createSlice({
@@ -61,12 +62,20 @@ const accountSlice = createSlice({
       state.selectedEmployee = null;
     },
 
-    removeEmployeeFromList: (state, action: PayloadAction<string>) => {
-      const staffId = action.payload;
-      state.employees = state.employees.filter((employee) => employee.employeeId !== staffId);
-      if (state.selectedEmployee?.employeeId === staffId) {
-        state.selectedEmployee = null;
-      }
+    // 삭제
+    deleteStaffRequest: (
+      state,
+      action: PayloadAction<{ staffId: string; searchParams: StaffSearchParams }>,
+    ) => {
+      state.deleteStatus = { ...initialStatus, loading: true };
+      state.searchParams = action.payload.searchParams;
+    },
+    deleteStaffSuccess: (state) => {
+      state.deleteStatus = { ...initialStatus, loading: false, success: true };
+      state.selectedEmployee = null;
+    },
+    deleteStaffFailure: (state, action: PayloadAction<string>) => {
+      state.deleteStatus = { ...initialStatus, loading: false, error: action.payload };
     },
 
     // 등록
@@ -101,7 +110,9 @@ export const {
   fetchStaffDetailSuccess,
   fetchStaffDetailFailure,
   clearSelectedEmployee,
-  removeEmployeeFromList,
+  deleteStaffRequest,
+  deleteStaffSuccess,
+  deleteStaffFailure,
   registerStaffRequest,
   registerStaffSuccess,
   registerStaffFailure,
