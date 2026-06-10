@@ -9,13 +9,12 @@ import EmployeeDetailModal from "@/components/accounts/EmployeeDetailModal";
 import type { Employee, EmployeeRegisterForm, EmployeeSearchCriteria } from "@/features/accounts/AccountTypes";
 import {
   clearSelectedEmployee,
+  deleteStaffRequest,
   fetchStaffDetailRequest,
   fetchStaffListRequest,
   registerStaffRequest,
-  removeEmployeeFromList,
   resetStatus,
 } from "@/features/accounts/AccountSlice";
-import { removeStaffDetailCache } from "@/features/accounts/staffEnrichment";
 import type { StaffSearchParams } from "@/features/accounts/staffSearchUtils";
 import type { AppDispatch, RootState } from "@/store/Store";
 import styles from "@/components/accounts/AccountPageStyles.module.css";
@@ -31,13 +30,14 @@ const defaultSearchParams: StaffSearchParams = {
 
 const AccountManagementPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { employees, selectedEmployee, listStatus, detailStatus, createStatus } = useSelector(
+  const { employees, selectedEmployee, listStatus, detailStatus, createStatus, deleteStatus } = useSelector(
     (state: RootState) => ({
       employees: state.account.employees,
       selectedEmployee: state.account.selectedEmployee,
       listStatus: state.account.listStatus,
       detailStatus: state.account.detailStatus,
       createStatus: state.account.createStatus,
+      deleteStatus: state.account.deleteStatus,
     }),
     shallowEqual,
   );
@@ -51,7 +51,7 @@ const AccountManagementPage = () => {
   const [department, setDepartment] = useState("");
   const [showDetailFilter, setShowDetailFilter] = useState(false);
 
-  const error = listStatus.error || detailStatus.error || createStatus.error;
+  const error = listStatus.error || detailStatus.error || createStatus.error || deleteStatus.error;
 
   const buildSearchParams = useCallback(
     (): StaffSearchParams => ({
@@ -73,6 +73,20 @@ const AccountManagementPage = () => {
       dispatch(resetStatus("createStatus"));
     }
   }, [createStatus.success, dispatch]);
+
+  useEffect(() => {
+    if (deleteStatus.success) {
+      setDetailOpen(false);
+      dispatch(resetStatus("deleteStatus"));
+    }
+  }, [deleteStatus.success, dispatch]);
+
+  useEffect(() => {
+    const nextTotalPages = Math.max(1, Math.ceil(employees.length / PAGE_SIZE));
+    if (page > nextTotalPages) {
+      setPage(nextTotalPages);
+    }
+  }, [employees.length, page]);
 
   const handleSearch = () => {
     setPage(1);
@@ -104,23 +118,14 @@ const AccountManagementPage = () => {
   };
 
   const handleDeleteEmployee = (employee: Employee) => {
-    const nextCount = employees.filter((item) => item.employeeId !== employee.employeeId).length;
-    const nextTotalPages = Math.max(1, Math.ceil(nextCount / PAGE_SIZE));
-
-    removeStaffDetailCache(employee.employeeId);
-    dispatch(removeEmployeeFromList(employee.employeeId));
-    setDetailOpen(false);
-    dispatch(clearSelectedEmployee());
-
-    if (page > nextTotalPages) {
-      setPage(nextTotalPages);
-    }
+    dispatch(deleteStaffRequest({ staffId: employee.employeeId, searchParams: buildSearchParams() }));
   };
 
   const handleClearError = () => {
     dispatch(resetStatus("listStatus"));
     dispatch(resetStatus("detailStatus"));
     dispatch(resetStatus("createStatus"));
+    dispatch(resetStatus("deleteStatus"));
   };
 
   const totalPages = Math.max(1, Math.ceil(employees.length / PAGE_SIZE));
@@ -185,6 +190,7 @@ const AccountManagementPage = () => {
         open={detailOpen}
         employee={selectedEmployee}
         loading={detailStatus.loading}
+        deleting={deleteStatus.loading}
         onClose={handleDetailClose}
         onDelete={handleDeleteEmployee}
       />

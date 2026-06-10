@@ -63,6 +63,7 @@ export interface AccountState {
   listStatus: Status;
   detailStatus: Status;
   createStatus: Status;
+  deleteStatus: Status;
 }
 
 export type ApiResponse<T> = {

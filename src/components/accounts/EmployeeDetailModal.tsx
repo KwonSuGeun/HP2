@@ -10,6 +10,7 @@ type EmployeeDetailModalProps = {
   open: boolean;
   employee: Employee | null;
   loading?: boolean;
+  deleting?: boolean;
   onClose: () => void;
   onDelete?: (employee: Employee) => void;
 };
@@ -32,6 +33,7 @@ const EmployeeDetailModal = ({
   open,
   employee,
   loading = false,
+  deleting = false,
   onClose,
   onDelete,
 }: EmployeeDetailModalProps) => {
@@ -140,13 +142,18 @@ const EmployeeDetailModal = ({
 
         <div className={styles.modalFooterBetween}>
           {employee && !loading && onDelete ? (
-            <button type="button" className={styles.modalDeleteButton} onClick={handleDelete}>
-              삭제하기
+            <button
+              type="button"
+              className={styles.modalDeleteButton}
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? "삭제 중..." : "삭제하기"}
             </button>
           ) : (
             <span aria-hidden="true" />
           )}
-          <button type="button" className={styles.modalCancelButton} onClick={onClose}>
+          <button type="button" className={styles.modalCancelButton} onClick={onClose} disabled={deleting}>
             닫기
           </button>
         </div>

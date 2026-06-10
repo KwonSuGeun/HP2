@@ -15,3 +15,7 @@ export const fetchStaffDetailAPI = (staffId: string) => {
 export const registerStaffAPI = (request: StaffRegisterRequest) => {
   return api.post<ApiResponse<null>>(`${staffBase}/register`, request);
 };
+
+export const deleteStaffAPI = (staffId: string) => {
+  return api.delete<ApiResponse<null>>(`${staffBase}/${staffId}`);
+};
