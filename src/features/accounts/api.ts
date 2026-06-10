@@ -1,16 +1,17 @@
 import { api } from "@/lib/Axios";
+import { getStaffApiBase } from "@/lib/api/staffApiPaths";
 import type { ApiResponse, StaffDto, StaffListRequest, StaffRegisterRequest } from "./AccountTypes";
 
-const STAFF_BASE = "/admin/staff";
+const staffBase = getStaffApiBase();
 
 export const fetchStaffListAPI = (request: StaffListRequest) => {
-  return api.post<ApiResponse<StaffDto[]>>(`${STAFF_BASE}/search`, request);
+  return api.post<ApiResponse<StaffDto[]>>(`${staffBase}/search`, request);
 };
 
 export const fetchStaffDetailAPI = (staffId: string) => {
-  return api.get<ApiResponse<StaffDto>>(`${STAFF_BASE}/${staffId}`);
+  return api.get<ApiResponse<StaffDto>>(`${staffBase}/${staffId}`);
 };
 
 export const registerStaffAPI = (request: StaffRegisterRequest) => {
-  return api.post<ApiResponse<null>>(`${STAFF_BASE}/register`, request);
+  return api.post<ApiResponse<null>>(`${staffBase}/register`, request);
 };

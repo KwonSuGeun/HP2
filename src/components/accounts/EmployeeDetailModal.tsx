@@ -11,6 +11,7 @@ type EmployeeDetailModalProps = {
   employee: Employee | null;
   loading?: boolean;
   onClose: () => void;
+  onDelete?: (employee: Employee) => void;
 };
 
 const DetailField = ({ label, value }: { label: string; value: string }) => (
@@ -32,8 +33,16 @@ const EmployeeDetailModal = ({
   employee,
   loading = false,
   onClose,
+  onDelete,
 }: EmployeeDetailModalProps) => {
   if (!open) return null;
+
+  const handleDelete = () => {
+    if (!employee || !onDelete) return;
+    const confirmed = window.confirm(`"${employee.name}" 직원을 목록에서 삭제하시겠습니까?`);
+    if (!confirmed) return;
+    onDelete(employee);
+  };
 
   return (
     <div className={styles.modalOverlay} role="presentation" onClick={onClose}>
@@ -121,7 +130,7 @@ const EmployeeDetailModal = ({
                 <DetailField label="내선번호 [STAFF_EXTENSION_NO]" value={employee.staffExtensionNo} />
                 <DetailField
                   label="재직 상태 [STAFF_STATUS]"
-                  value={STATUS_LABEL[employee.status] ?? employee.status}
+                  value={STATUS_LABEL[employee.rawStaffStatus ?? ""] ?? STATUS_LABEL[employee.status] ?? employee.rawStaffStatus ?? employee.status}
                 />
                 <DetailField label="입사일 [STAFF_HIRE_DATE]" value={employee.staffHireDate} />
               </div>
@@ -129,7 +138,14 @@ const EmployeeDetailModal = ({
           )}
         </div>
 
-        <div className={styles.modalFooter}>
+        <div className={styles.modalFooterBetween}>
+          {employee && !loading && onDelete ? (
+            <button type="button" className={styles.modalDeleteButton} onClick={handleDelete}>
+              삭제하기
+            </button>
+          ) : (
+            <span aria-hidden="true" />
+          )}
           <button type="button" className={styles.modalCancelButton} onClick={onClose}>
             닫기
           </button>

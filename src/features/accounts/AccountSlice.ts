@@ -43,8 +43,12 @@ const accountSlice = createSlice({
     },
 
     // 상세조회
-    fetchStaffDetailRequest: (state, _action: PayloadAction<string>) => {
+    fetchStaffDetailRequest: (state, action: PayloadAction<string>) => {
       state.detailStatus = { ...initialStatus, loading: true };
+      const fallback = state.employees.find((employee) => employee.employeeId === action.payload);
+      if (fallback) {
+        state.selectedEmployee = fallback;
+      }
     },
     fetchStaffDetailSuccess: (state, action: PayloadAction<Employee>) => {
       state.detailStatus = { ...initialStatus, loading: false };
@@ -55,6 +59,14 @@ const accountSlice = createSlice({
     },
     clearSelectedEmployee: (state) => {
       state.selectedEmployee = null;
+    },
+
+    removeEmployeeFromList: (state, action: PayloadAction<string>) => {
+      const staffId = action.payload;
+      state.employees = state.employees.filter((employee) => employee.employeeId !== staffId);
+      if (state.selectedEmployee?.employeeId === staffId) {
+        state.selectedEmployee = null;
+      }
     },
 
     // 등록
@@ -89,6 +101,7 @@ export const {
   fetchStaffDetailSuccess,
   fetchStaffDetailFailure,
   clearSelectedEmployee,
+  removeEmployeeFromList,
   registerStaffRequest,
   registerStaffSuccess,
   registerStaffFailure,

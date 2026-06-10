@@ -24,6 +24,8 @@ export interface Employee {
   staffRoleCode: string;
   staffExtensionNo: string;
   staffHireDate: string;
+  staffAddress?: string;
+  rawStaffStatus?: string;
 }
 
 export interface EmployeeRegisterForm {
@@ -85,6 +87,7 @@ export interface StaffDto {
   staffHireDate?: string;
   staffBirthDate?: string;
   staffLicenseNo?: string;
+  staffAddress?: string;
 }
 
 export interface StaffListRequest {

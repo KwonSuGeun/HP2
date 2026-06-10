@@ -1,6 +1,6 @@
 import { api } from "@/lib/Axios";
+import { getStaffApiBase } from "@/lib/api/staffApiPaths";
 import type { ApiResponse } from "@/lib/api/ApiResponse";
-
 export type StaffItem = {
   staffId: string;
   staffName: string;
@@ -45,7 +45,7 @@ export async function fetchStaffListApi(
   request: StaffListRequest = {},
 ): Promise<StaffItem[]> {
   const response = await api.post<ApiResponse<StaffItem[]>>(
-    "/admin/staff/search",
+    `${getStaffApiBase()}/search`,
     request,
   );
   return response.data.data ?? [];
@@ -53,7 +53,7 @@ export async function fetchStaffListApi(
 
 export async function fetchStaffByIdApi(staffId: string): Promise<StaffItem> {
   const response = await api.get<ApiResponse<StaffItem>>(
-    `/admin/staff/${staffId}`,
+    `${getStaffApiBase()}/${staffId}`,
   );
   return response.data.data;
 }
@@ -61,12 +61,12 @@ export async function fetchStaffByIdApi(staffId: string): Promise<StaffItem> {
 export async function registerStaffApi(
   request: StaffRegisterRequest,
 ): Promise<void> {
-  await api.post<ApiResponse<null>>("/admin/staff/register", request);
+  await api.post<ApiResponse<null>>(`${getStaffApiBase()}/register`, request);
 }
 
 export async function fetchDepartmentListApi(): Promise<DepartmentItem[]> {
   const response = await api.get<ApiResponse<DepartmentItem[]>>(
-    "/admin/staff/departments",
+    `${getStaffApiBase()}/departments`,
   );
   return response.data.data ?? [];
 }

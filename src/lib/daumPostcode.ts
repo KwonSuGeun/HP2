@@ -16,8 +16,16 @@ export function loadDaumPostcodeScript(): Promise<void> {
   scriptLoading = new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${DAUM_POSTCODE_SCRIPT}"]`);
     if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("우편번호 스크립트 로드 실패")));
+      if (window.daum?.Postcode) {
+        resolve();
+        return;
+      }
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener(
+        "error",
+        () => reject(new Error("우편번호 스크립트 로드 실패")),
+        { once: true },
+      );
       return;
     }
 
@@ -50,20 +58,28 @@ export function formatDaumBaseAddress(data: DaumPostcodeData): string {
   return address;
 }
 
+const DEFAULT_EMBED_HEIGHT = 480;
+
 /** 검색 UI를 컨테이너에 임베드 */
 export function embedDaumPostcode(
   container: HTMLElement,
   onComplete: (data: DaumPostcodeData) => void,
+  height: number = DEFAULT_EMBED_HEIGHT,
 ): void {
   if (!window.daum?.Postcode) {
     throw new Error("Daum Postcode가 로드되지 않았습니다.");
   }
 
   container.replaceChildren();
+  container.style.width = "100%";
+  container.style.height = `${height}px`;
 
   new window.daum.Postcode({
     oncomplete: onComplete,
+    onresize: (size) => {
+      container.style.height = `${size.height}px`;
+    },
     width: "100%",
-    height: "100%",
+    height,
   }).embed(container);
 }
