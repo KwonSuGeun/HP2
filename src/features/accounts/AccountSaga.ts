@@ -51,7 +51,10 @@ function* fetchStaffListSaga(action: PayloadAction<StaffSearchParams>) {
     const request = buildStaffListRequest(action.payload);
     const response: AxiosResponse<ApiResponse<StaffDto[]>> = yield call(fetchStaffListAPI, request);
     const list = assertApiSuccess(response.data) ?? [];
-    const employees = applyClientFilters(list.map(staffDtoToEmployee), action.payload);
+    const employees = applyClientFilters(
+      list.map((dto) => staffDtoToEmployee(dto)),
+      action.payload,
+    );
     yield put(fetchStaffListSuccess(employees));
   } catch (e) {
     yield put(fetchStaffListFailure(getErrorMessage(e, "직원 목록을 불러오지 못했습니다.")));
