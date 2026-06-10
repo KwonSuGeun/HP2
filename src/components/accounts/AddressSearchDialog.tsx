@@ -1,18 +1,8 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
-import {
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import type { DaumPostcodeData } from "@/types/daumPostcode";
 import { embedDaumPostcode, loadDaumPostcodeScript } from "@/lib/daumPostcode";
-import { modalTitleSx } from "./AccountPageStyles";
 import styles from "./AccountPageStyles.module.css";
 
 type AddressSearchDialogProps = {
@@ -66,35 +56,41 @@ const AddressSearchDialog = ({
     };
   }, [open]);
 
+  if (!open) return null;
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="sm"
-      fullWidth
-      slotProps={{ paper: { sx: { borderRadius: 3 } } }}
-    >
-      <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
-        <Typography sx={modalTitleSx}>주소 검색</Typography>
-        <IconButton size="small" onClick={onClose} aria-label="닫기">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    <div className={styles.modalOverlay} role="presentation" onClick={onClose}>
+      <div
+        className={`${styles.modalPanel} ${styles.modalPanelSm}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="address-search-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className={styles.modalHeader}>
+          <h2 id="address-search-title" className={styles.modalTitle}>
+            주소 검색
+          </h2>
+          <button type="button" className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
+            ×
+          </button>
+        </div>
 
-      <DialogContent dividers sx={{ p: 0, height: 480, position: "relative" }}>
-        {loading ? (
-          <div className={styles.addressLoadingOverlay}>
-            <CircularProgress size={28} />
-          </div>
-        ) : null}
+        <div className={`${styles.modalBody} ${styles.modalBodyAddress}`}>
+          {loading ? (
+            <div className={styles.addressLoadingOverlay}>
+              <div className={styles.spinner} aria-label="로딩 중" />
+            </div>
+          ) : null}
 
-        {error ? (
-          <div className={styles.addressError}>{error}</div>
-        ) : (
-          <div ref={containerRef} className={styles.addressEmbedContainer} />
-        )}
-      </DialogContent>
-    </Dialog>
+          {error ? (
+            <div className={styles.addressError}>{error}</div>
+          ) : (
+            <div ref={containerRef} className={styles.addressEmbedContainer} />
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
