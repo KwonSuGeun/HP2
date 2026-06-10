@@ -1,41 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, ChangeEvent, KeyboardEvent } from "react";
-import {
-  Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import { useCallback, useEffect, useRef, useState, ChangeEvent } from "react";
 import type { EmployeeRegisterForm } from "@/features/accounts/AccountTypes";
 import { DEFAULT_REGISTER_FORM, DEPARTMENT_OPTIONS } from "@/features/accounts/formConstants";
 import { isMedicalStaff } from "@/features/accounts/employeeUtils";
 import { formatDaumBaseAddress } from "@/lib/daumPostcode";
 import AddressSearchDialog from "@/components/accounts/AddressSearchDialog";
 import type { DaumPostcodeData } from "@/types/daumPostcode";
-import {
-  formFieldHintSx,
-  formLabelSx,
-  modalCancelButtonSx,
-  modalSubmitButtonSx,
-  modalTitleSx,
-  profileAvatarSx,
-  uploadButtonSx,
-  zipFindButtonSx,
-} from "./AccountPageStyles";
 import styles from "./AccountPageStyles.module.css";
 
 type EmployeeRegisterModalProps = {
@@ -47,11 +18,11 @@ type EmployeeRegisterModalProps = {
 
 type FormErrors = Partial<Record<keyof EmployeeRegisterForm, string>>;
 
-const FieldLabel = ({ label, required }: { label: string; required?: boolean }) => (
-    <Typography sx={formLabelSx}>
-      {label}
-      {required ? " *" : ""}
-  </Typography>
+const FieldLabel = ({ label, required, htmlFor }: { label: string; required?: boolean; htmlFor?: string }) => (
+  <label className={styles.formLabel} htmlFor={htmlFor}>
+    {label}
+    {required ? " *" : ""}
+  </label>
 );
 
 /** 신규 직원 등록 모달 — 사용자 입력 필드 9개만 */
@@ -127,251 +98,256 @@ const EmployeeRegisterModal = ({
     onSubmit(form);
   };
 
+  if (!open) return null;
+
   return (
-    <Dialog
-      open={open}
-      onClose={loading ? undefined : onClose}
-      maxWidth="md"
-      fullWidth
-      slotProps={{ paper: { sx: { borderRadius: 3 } } }}
-    >
-      <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
-        <Typography sx={modalTitleSx}>신규 직원 등록</Typography>
-        <IconButton size="small" onClick={onClose} aria-label="닫기">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-
-      <DialogContent dividers sx={{ pt: 2 }}>
-        <Grid container spacing={3}>
-          {/* 좌측: 프로필 사진 */}
-          <Grid size={{ xs: 12, sm: 3 }}>
-            <div className={styles.profileUploadArea}>
-              <Avatar src={form.profileImage ?? undefined} sx={profileAvatarSx}>
-                {!form.profileImage ? <PersonOutlinedIcon sx={{ fontSize: 48 }} /> : null}
-              </Avatar>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handlePhotoUpload}
-              />
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<ImageOutlinedIcon />}
-                sx={uploadButtonSx}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                사진 업로드
-              </Button>
-              <Typography sx={formFieldHintSx}>선택사항</Typography>
-            </div>
-          </Grid>
-
-          {/* 우측: 입력 필드 */}
-          <Grid size={{ xs: 12, sm: 9 }}>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="사번" required />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="doctor01"
-                  value={form.employeeId}
-                  error={!!errors.employeeId}
-                  helperText={errors.employeeId}
-                  onChange={(event) => updateField("employeeId", event.target.value)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="비밀번호" required />
-                <TextField
-                  fullWidth
-                  size="small"
-                  type="password"
-                  value={form.password}
-                  error={!!errors.password}
-                  helperText={errors.password}
-                  onChange={(event) => updateField("password", event.target.value)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="소속 부서" required />
-                <FormControl fullWidth size="small" error={!!errors.departmentId}>
-                  <Select
-                    displayEmpty
-                    value={form.departmentId}
-                    onChange={(event) => updateField("departmentId", event.target.value)}
-                  >
-                    <MenuItem value="" disabled>
-                      부서 선택
-                    </MenuItem>
-                    {DEPARTMENT_OPTIONS.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.departmentId ? (
-                    <Typography sx={{ ...formFieldHintSx, color: "error.main", mt: 0.5 }}>
-                      {errors.departmentId}
-                    </Typography>
-                  ) : null}
-                </FormControl>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="이름" required />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="홍길동"
-                  value={form.name}
-                  error={!!errors.name}
-                  helperText={errors.name}
-                  onChange={(event) => updateField("name", event.target.value)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="생년월일" required />
-                <TextField
-                  fullWidth
-                  size="small"
-                  type="date"
-                  value={form.birthDate}
-                  error={!!errors.birthDate}
-                  helperText={errors.birthDate}
-                  onChange={(event) => updateField("birthDate", event.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="이메일" />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="doctor@hospital.com"
-                  value={form.email}
-                  onChange={(event) => updateField("email", event.target.value)}
-                />
-                <Typography sx={formFieldHintSx}>선택</Typography>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="휴대폰번호" required />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="010-1234-5678"
-                  value={form.phoneNumber}
-                  error={!!errors.phoneNumber}
-                  helperText={errors.phoneNumber}
-                  onChange={(event) => updateField("phoneNumber", event.target.value)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FieldLabel label="면허번호" />
-                <TextField
-                  fullWidth
-                  size="small"
-                  placeholder="Dr/Nur License No"
-                  value={form.licenseNumber}
-                  error={!!errors.licenseNumber}
-                  helperText={errors.licenseNumber ?? "의사/간호사만 필수"}
-                  onChange={(event) => updateField("licenseNumber", event.target.value)}
-                />
-              </Grid>
-
-              <Grid size={12}>
-                <FieldLabel label="주소" required />
-                <div className={styles.addressSection}>
-                  <Grid container spacing={1.5}>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Typography sx={{ ...formLabelSx, fontSize: 11 }}>우편번호</Typography>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        value={form.zipCode}
-                        placeholder="우편번호 찾기로 입력"
-                        slotProps={{ input: { readOnly: true } }}
-                        sx={{ "& .MuiInputBase-input": { bgcolor: "rgba(0,0,0,0.02)" } }}
-                      />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }} sx={{ display: "flex", alignItems: "flex-end" }}>
-                      <Button
-                        variant="outlined"
-                        sx={zipFindButtonSx}
-                        onClick={() => setAddressSearchOpen(true)}
-                      >
-                        우편번호 찾기
-                      </Button>
-                    </Grid>
-                    <Grid size={12}>
-                      <Typography sx={{ ...formLabelSx, fontSize: 11 }}>기본주소</Typography>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        value={form.baseAddress}
-                        placeholder="우편번호 찾기로 입력"
-                        error={!!errors.baseAddress}
-                        slotProps={{ input: { readOnly: true } }}
-                        sx={{ "& .MuiInputBase-input": { bgcolor: "rgba(0,0,0,0.02)" } }}
-                      />
-                    </Grid>
-                    <Grid size={12}>
-                      <Typography sx={{ ...formLabelSx, fontSize: 11 }}>상세주소 (Option)</Typography>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        placeholder="4층 401호"
-                        value={form.detailAddress}
-                        inputRef={detailAddressRef}
-                        onChange={(event) => updateField("detailAddress", event.target.value)}
-                      />
-                    </Grid>
-                    {errors.baseAddress ? (
-                      <Grid size={12}>
-                        <Typography sx={{ fontSize: 11, color: "error.main" }}>
-                          {errors.baseAddress}
-                        </Typography>
-                      </Grid>
-                    ) : null}
-                  </Grid>
-                </div>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </DialogContent>
-
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button variant="outlined" sx={modalCancelButtonSx} onClick={onClose} disabled={loading}>
-          취소
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<SaveOutlinedIcon />}
-          sx={modalSubmitButtonSx}
-          onClick={handleSubmit}
-          disabled={loading}
+    <>
+      <div className={styles.modalOverlay} role="presentation" onClick={loading ? undefined : onClose}>
+        <div
+          className={styles.modalPanel}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="employee-register-title"
+          onClick={(event) => event.stopPropagation()}
         >
-          {loading ? "등록 중..." : "등록 완료"}
-        </Button>
-      </DialogActions>
+          <div className={styles.modalHeader}>
+            <h2 id="employee-register-title" className={styles.modalTitle}>
+              신규 직원 등록
+            </h2>
+            <button type="button" className={styles.modalCloseBtn} onClick={onClose} aria-label="닫기">
+              ×
+            </button>
+          </div>
+
+          <div className={styles.modalBody}>
+            <div className={styles.formLayout}>
+              <div>
+                <div className={styles.profileUploadArea}>
+                  <div className={styles.profileAvatar}>
+                    {form.profileImage ? (
+                      <img src={form.profileImage} alt="프로필 미리보기" />
+                    ) : (
+                      <span className={styles.userIconLg} aria-hidden="true">
+                        👤
+                      </span>
+                    )}
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className={styles.hiddenInput}
+                    onChange={handlePhotoUpload}
+                  />
+                  <button
+                    type="button"
+                    className={styles.outlineButton}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    사진 업로드
+                  </button>
+                  <p className={styles.formFieldHint}>선택사항</p>
+                </div>
+              </div>
+
+              <div>
+                <div className={styles.formGrid}>
+                  <div>
+                    <FieldLabel label="사번" required htmlFor="employeeId" />
+                    <input
+                      id="employeeId"
+                      type="text"
+                      className={`${styles.input} ${errors.employeeId ? styles.inputError : ""}`}
+                      placeholder="doctor01"
+                      value={form.employeeId}
+                      onChange={(event) => updateField("employeeId", event.target.value)}
+                    />
+                    {errors.employeeId ? <p className={styles.fieldError}>{errors.employeeId}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="비밀번호" required htmlFor="password" />
+                    <input
+                      id="password"
+                      type="password"
+                      className={`${styles.input} ${errors.password ? styles.inputError : ""}`}
+                      value={form.password}
+                      onChange={(event) => updateField("password", event.target.value)}
+                    />
+                    {errors.password ? <p className={styles.fieldError}>{errors.password}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="소속 부서" required htmlFor="departmentId" />
+                    <select
+                      id="departmentId"
+                      className={`${styles.select} ${errors.departmentId ? styles.inputError : ""}`}
+                      value={form.departmentId}
+                      onChange={(event) => updateField("departmentId", event.target.value)}
+                    >
+                      <option value="" disabled>
+                        부서 선택
+                      </option>
+                      {DEPARTMENT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.departmentId ? <p className={styles.fieldError}>{errors.departmentId}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="이름" required htmlFor="name" />
+                    <input
+                      id="name"
+                      type="text"
+                      className={`${styles.input} ${errors.name ? styles.inputError : ""}`}
+                      placeholder="홍길동"
+                      value={form.name}
+                      onChange={(event) => updateField("name", event.target.value)}
+                    />
+                    {errors.name ? <p className={styles.fieldError}>{errors.name}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="생년월일" required htmlFor="birthDate" />
+                    <input
+                      id="birthDate"
+                      type="date"
+                      className={`${styles.input} ${errors.birthDate ? styles.inputError : ""}`}
+                      value={form.birthDate}
+                      onChange={(event) => updateField("birthDate", event.target.value)}
+                    />
+                    {errors.birthDate ? <p className={styles.fieldError}>{errors.birthDate}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="이메일" htmlFor="email" />
+                    <input
+                      id="email"
+                      type="email"
+                      className={styles.input}
+                      placeholder="doctor@hospital.com"
+                      value={form.email}
+                      onChange={(event) => updateField("email", event.target.value)}
+                    />
+                    <p className={styles.formFieldHint}>선택</p>
+                  </div>
+
+                  <div>
+                    <FieldLabel label="휴대폰번호" required htmlFor="phoneNumber" />
+                    <input
+                      id="phoneNumber"
+                      type="tel"
+                      className={`${styles.input} ${errors.phoneNumber ? styles.inputError : ""}`}
+                      placeholder="010-1234-5678"
+                      value={form.phoneNumber}
+                      onChange={(event) => updateField("phoneNumber", event.target.value)}
+                    />
+                    {errors.phoneNumber ? <p className={styles.fieldError}>{errors.phoneNumber}</p> : null}
+                  </div>
+
+                  <div>
+                    <FieldLabel label="면허번호" htmlFor="licenseNumber" />
+                    <input
+                      id="licenseNumber"
+                      type="text"
+                      className={`${styles.input} ${errors.licenseNumber ? styles.inputError : ""}`}
+                      placeholder="Dr/Nur License No"
+                      value={form.licenseNumber}
+                      onChange={(event) => updateField("licenseNumber", event.target.value)}
+                    />
+                    {errors.licenseNumber ? (
+                      <p className={styles.fieldError}>{errors.licenseNumber}</p>
+                    ) : (
+                      <p className={styles.formFieldHint}>의사/간호사만 필수</p>
+                    )}
+                  </div>
+
+                  <div className={styles.formGridColFull}>
+                    <FieldLabel label="주소" required />
+                    <div className={styles.addressSection}>
+                      <div className={styles.addressGrid}>
+                        <div>
+                          <label className={`${styles.formLabel} ${styles.formLabelSmall}`} htmlFor="zipCode">
+                            우편번호
+                          </label>
+                          <input
+                            id="zipCode"
+                            type="text"
+                            readOnly
+                            className={`${styles.input} ${styles.inputReadonly}`}
+                            value={form.zipCode}
+                            placeholder="우편번호 찾기로 입력"
+                          />
+                        </div>
+                        <div className={styles.addressButtonCol}>
+                          <button
+                            type="button"
+                            className={styles.outlineButton}
+                            onClick={() => setAddressSearchOpen(true)}
+                          >
+                            우편번호 찾기
+                          </button>
+                        </div>
+                        <div className={styles.addressGridColFull}>
+                          <label className={`${styles.formLabel} ${styles.formLabelSmall}`} htmlFor="baseAddress">
+                            기본주소
+                          </label>
+                          <input
+                            id="baseAddress"
+                            type="text"
+                            readOnly
+                            className={`${styles.input} ${styles.inputReadonly} ${errors.baseAddress ? styles.inputError : ""}`}
+                            value={form.baseAddress}
+                            placeholder="우편번호 찾기로 입력"
+                          />
+                        </div>
+                        <div className={styles.addressGridColFull}>
+                          <label className={`${styles.formLabel} ${styles.formLabelSmall}`} htmlFor="detailAddress">
+                            상세주소 (Option)
+                          </label>
+                          <input
+                            id="detailAddress"
+                            ref={detailAddressRef}
+                            type="text"
+                            className={styles.input}
+                            placeholder="4층 401호"
+                            value={form.detailAddress}
+                            onChange={(event) => updateField("detailAddress", event.target.value)}
+                          />
+                        </div>
+                        {errors.baseAddress ? (
+                          <div className={styles.addressGridColFull}>
+                            <p className={styles.fieldError}>{errors.baseAddress}</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.modalFooter}>
+            <button type="button" className={styles.modalCancelButton} onClick={onClose} disabled={loading}>
+              취소
+            </button>
+            <button type="button" className={styles.modalSubmitButton} onClick={handleSubmit} disabled={loading}>
+              {loading ? "등록 중..." : "등록 완료"}
+            </button>
+          </div>
+        </div>
+      </div>
 
       <AddressSearchDialog
         open={addressSearchOpen}
         onClose={() => setAddressSearchOpen(false)}
         onSelect={handleAddressSelect}
       />
-    </Dialog>
+    </>
   );
 };
 

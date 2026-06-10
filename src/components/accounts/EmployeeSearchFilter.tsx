@@ -1,26 +1,12 @@
 "use client"
 
 import { KeyboardEvent } from "react";
-import {
-  Button,
-  Collapse,
-  FormControl,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
 import type { EmployeeSearchCriteria } from "@/features/accounts/AccountTypes";
 import {
   DEPARTMENT_OPTIONS,
   SEARCH_CRITERIA_OPTIONS,
   STAFF_TYPE_OPTIONS,
 } from "@/features/accounts/formConstants";
-import {
-  detailFilterToggleSx,
-  resetLinkSx,
-  searchButtonSx,
-} from "./AccountPageStyles";
 import styles from "./AccountPageStyles.module.css";
 
 type EmployeeSearchFilterProps = {
@@ -53,92 +39,92 @@ const EmployeeSearchFilter = ({
   onSearch,
   onReset,
 }: EmployeeSearchFilterProps) => {
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") onSearch();
   };
 
   return (
     <div className={styles.searchCard}>
       <div className={styles.searchRow}>
-        <FormControl size="small" sx={{ minWidth: 100 }}>
-          <Select
-            value={criteria}
-            onChange={(event) =>
-              onCriteriaChange(event.target.value as EmployeeSearchCriteria)
-            }
-          >
-            {SEARCH_CRITERIA_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <select
+          className={styles.criteriaSelect}
+          value={criteria}
+          onChange={(event) => onCriteriaChange(event.target.value as EmployeeSearchCriteria)}
+        >
+          {SEARCH_CRITERIA_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
-        <TextField
-          size="small"
+        <input
+          type="text"
+          className={styles.searchInput}
           placeholder="검색어를 입력하세요"
           value={keyword}
           onChange={(event) => onKeywordChange(event.target.value)}
           onKeyDown={handleKeyDown}
-          sx={{ flex: 1, minWidth: 180 }}
         />
 
-        <Button variant="contained" sx={searchButtonSx} onClick={onSearch}>
+        <button type="button" className={styles.searchButton} onClick={onSearch}>
           검색
-        </Button>
+        </button>
 
-        <Typography sx={resetLinkSx} onClick={onReset}>
+        <button type="button" className={styles.resetLink} onClick={onReset}>
           초기화
-        </Typography>
+        </button>
 
-        <Typography
-          sx={detailFilterToggleSx}
+        <button
+          type="button"
+          className={styles.detailFilterToggle}
           onClick={() => onShowDetailFilterChange(!showDetailFilter)}
         >
           {showDetailFilter ? "상세검색 닫기" : "상세검색 필터"}
-        </Typography>
+        </button>
       </div>
 
-      <Collapse in={showDetailFilter}>
+      {showDetailFilter ? (
         <div className={styles.detailFilterArea}>
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, mb: 0.5, color: "var(--muted)" }}>
+          <div className={styles.filterSelectGroup}>
+            <label className={styles.filterLabel} htmlFor="jobRoleFilter">
               직무
-            </Typography>
-            <Select
+            </label>
+            <select
+              id="jobRoleFilter"
+              className={styles.select}
               value={jobRole}
-              displayEmpty
               onChange={(event) => onJobRoleChange(event.target.value)}
             >
-              <MenuItem value="">전체</MenuItem>
+              <option value="">전체</option>
               {STAFF_TYPE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
+                <option key={option.value} value={option.value}>
                   {option.label}
-                </MenuItem>
+                </option>
               ))}
-            </Select>
-          </FormControl>
+            </select>
+          </div>
 
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, mb: 0.5, color: "var(--muted)" }}>
+          <div className={styles.filterSelectGroup}>
+            <label className={styles.filterLabel} htmlFor="departmentFilter">
               부서
-            </Typography>
-            <Select
+            </label>
+            <select
+              id="departmentFilter"
+              className={styles.select}
               value={department}
-              displayEmpty
               onChange={(event) => onDepartmentChange(event.target.value)}
             >
-              <MenuItem value="">전체</MenuItem>
+              <option value="">전체</option>
               {DEPARTMENT_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
+                <option key={option.value} value={option.value}>
                   {option.label}
-                </MenuItem>
+                </option>
               ))}
-            </Select>
-          </FormControl>
+            </select>
+          </div>
         </div>
-      </Collapse>
+      ) : null}
     </div>
   );
 };

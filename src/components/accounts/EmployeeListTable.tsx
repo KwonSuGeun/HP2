@@ -1,25 +1,7 @@
 "use client"
 
-import {
-  Avatar,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import type { Employee } from "@/features/accounts/AccountTypes";
-import {
-  statusBadgeSx,
-  nameLinkSx,
-  tableBodyCellSx,
-  tableHeadCellSx,
-  tableRowEvenSx,
-} from "./AccountPageStyles";
+import { getStatusBadgeClass } from "./accountUiUtils";
 import styles from "./AccountPageStyles.module.css";
 
 const TABLE_STATUS_LABEL: Record<Employee["status"], string> = {
@@ -45,81 +27,91 @@ const EmployeeListTable = ({
 }: EmployeeListTableProps) => {
   return (
     <div className={styles.tableCard}>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={tableHeadCellSx} width={72}>
-                사진
-              </TableCell>
-              <TableCell sx={tableHeadCellSx}>사번</TableCell>
-              <TableCell sx={tableHeadCellSx}>이름</TableCell>
-              <TableCell sx={tableHeadCellSx}>부서</TableCell>
-              <TableCell sx={tableHeadCellSx}>직급</TableCell>
-              <TableCell sx={tableHeadCellSx}>연락처</TableCell>
-              <TableCell sx={tableHeadCellSx} width={100}>
-                상태
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <div className={styles.tableWrap}>
+        <table className={styles.dataTable}>
+          <thead>
+            <tr>
+              <th className={`${styles.tableHeadCell} ${styles.tableHeadCellPhoto}`}>사진</th>
+              <th className={styles.tableHeadCell}>사번</th>
+              <th className={styles.tableHeadCell}>이름</th>
+              <th className={styles.tableHeadCell}>부서</th>
+              <th className={styles.tableHeadCell}>직급</th>
+              <th className={styles.tableHeadCell}>연락처</th>
+              <th className={`${styles.tableHeadCell} ${styles.tableHeadCellStatus}`}>상태</th>
+            </tr>
+          </thead>
+          <tbody>
             {employees.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6, color: "var(--muted)" }}>
+              <tr>
+                <td className={styles.tableEmptyCell} colSpan={7}>
                   검색 결과가 없습니다.
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ) : (
               employees.map((employee, index) => (
-                <TableRow
-                  key={employee.id}
-                  sx={index % 2 === 1 ? tableRowEvenSx : undefined}
-                  hover
-                >
-                  <TableCell sx={tableBodyCellSx}>
-                    <Avatar
-                      src={employee.profileImage ?? undefined}
-                      sx={{ width: 40, height: 40, bgcolor: "var(--brand-soft)" }}
-                    >
-                      {employee.profileImage ? null : (
-                        <PersonOutlinedIcon sx={{ color: "var(--brand)", fontSize: 22 }} />
+                <tr key={employee.id} className={index % 2 === 1 ? styles.tableRowEven : undefined}>
+                  <td className={styles.tableBodyCell}>
+                    <div className={styles.tableAvatar}>
+                      {employee.profileImage ? (
+                        <img src={employee.profileImage} alt={`${employee.name} 프로필`} />
+                      ) : (
+                        <span className={styles.userIcon} aria-hidden="true">
+                          👤
+                        </span>
                       )}
-                    </Avatar>
-                  </TableCell>
-                  <TableCell sx={tableBodyCellSx}>{employee.employeeId}</TableCell>
-                  <TableCell sx={tableBodyCellSx}>
-                    <Typography
-                      component="span"
-                      sx={nameLinkSx}
-                      onClick={() => onNameClick(employee)}
-                    >
+                    </div>
+                  </td>
+                  <td className={styles.tableBodyCell}>{employee.employeeId}</td>
+                  <td className={styles.tableBodyCell}>
+                    <button type="button" className={styles.nameLink} onClick={() => onNameClick(employee)}>
                       {employee.name}
-                    </Typography>
-                  </TableCell>
-                  <TableCell sx={tableBodyCellSx}>{employee.department}</TableCell>
-                  <TableCell sx={tableBodyCellSx}>{employee.position}</TableCell>
-                  <TableCell sx={tableBodyCellSx}>{employee.phoneNumber}</TableCell>
-                  <TableCell sx={tableBodyCellSx}>
-                    <Typography component="span" sx={statusBadgeSx(employee.status)}>
+                    </button>
+                  </td>
+                  <td className={styles.tableBodyCell}>{employee.department}</td>
+                  <td className={styles.tableBodyCell}>{employee.position}</td>
+                  <td className={styles.tableBodyCell}>{employee.phoneNumber}</td>
+                  <td className={styles.tableBodyCell}>
+                    <span className={getStatusBadgeClass(employee.status)}>
                       {TABLE_STATUS_LABEL[employee.status]}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
+                    </span>
+                  </td>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
 
       {totalPages > 1 ? (
         <div className={styles.paginationWrap}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => onPageChange(value)}
-            color="primary"
-            shape="rounded"
-          />
+          <button
+            type="button"
+            className={styles.paginationBtn}
+            disabled={page <= 1}
+            onClick={() => onPageChange(page - 1)}
+            aria-label="이전 페이지"
+          >
+            {"<"}
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              type="button"
+              className={`${styles.paginationBtn} ${pageNumber === page ? styles.paginationBtnActive : ""}`}
+              onClick={() => onPageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            type="button"
+            className={styles.paginationBtn}
+            disabled={page >= totalPages}
+            onClick={() => onPageChange(page + 1)}
+            aria-label="다음 페이지"
+          >
+            {">"}
+          </button>
         </div>
       ) : null}
     </div>

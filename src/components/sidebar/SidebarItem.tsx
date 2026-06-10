@@ -1,26 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Collapse,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import type { SidebarItem as SidebarItemType } from "@/features/sidebar/SidebarTypes";
 import { sidebarIconMap } from "./SidebarIcons";
 import { hasActiveChild, isItemActive } from "./SidebarUtils";
 import {
-  childDotIconSx,
-  getItemButtonSx,
-  getItemIconSx,
-  getItemLabelSx,
-} from "./SidebarItemStyles";
+  getItemButtonClass,
+  getItemIconClass,
+  getItemLabelClass,
+  getItemPaddingLeft,
+} from "./sidebarItemUtils";
+import styles from "./SidebarItem.module.css";
 
 type SidebarItemProps = {
   item: SidebarItemType;
@@ -47,69 +37,58 @@ export default function SidebarItem({
     depth === 0 && item.icon && sidebarIconMap[item.icon] ? (
       sidebarIconMap[item.icon]
     ) : depth > 0 ? (
-      <FiberManualRecordIcon sx={childDotIconSx} />
+      <span className={styles.childDot} aria-hidden="true">
+        •
+      </span>
     ) : null;
 
-  const buttonContent = (
+  const buttonClass = getItemButtonClass(depth, isActive, isGroupActive, isLeafNoPath);
+  const buttonStyle = { paddingLeft: getItemPaddingLeft(depth) };
+
+  const content = (
     <>
-      <ListItemIcon sx={getItemIconSx(depth)}>{icon}</ListItemIcon>
-      <ListItemText
-        primary={
-          <Typography noWrap sx={getItemLabelSx(depth, isActive, isGroupActive)}>
-            {item.name}
-          </Typography>
-        }
-      />
+      <span className={getItemIconClass(depth)}>{icon}</span>
+      <span className={getItemLabelClass(depth, isActive, isGroupActive)}>{item.name}</span>
       {hasChildren ? (
-        isOpen ? (
-          <ExpandLessIcon fontSize="small" />
-        ) : (
-          <ExpandMoreIcon fontSize="small" />
-        )
+        <span className={styles.expandIcon} aria-hidden="true">
+          {isOpen ? "▴" : "▾"}
+        </span>
       ) : null}
     </>
   );
 
-  const buttonSx = getItemButtonSx(depth, isLeafNoPath);
-
   return (
-    <>
+    <li>
       {item.path && !hasChildren ? (
-        <ListItemButton
-          component={Link}
-          href={item.path}
-          selected={isActive}
-          sx={buttonSx}
-        >
-          {buttonContent}
-        </ListItemButton>
+        <Link href={item.path} className={buttonClass} style={buttonStyle}>
+          {content}
+        </Link>
       ) : (
-        <ListItemButton
+        <button
+          type="button"
+          className={buttonClass}
+          style={buttonStyle}
           onClick={() => hasChildren && onToggle(item.id)}
           disabled={isLeafNoPath}
-          selected={isActive || isGroupActive}
-          sx={buttonSx}
         >
-          {buttonContent}
-        </ListItemButton>
+          {content}
+        </button>
       )}
 
-      {hasChildren ? (
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <List disablePadding>
-            {item.children.map((child) => (
-              <SidebarItem
-                key={child.id}
-                item={child}
-                pathname={pathname}
-                depth={depth + 1}
-                openIds={openIds}
-                onToggle={onToggle}
-              />
-            ))}
-          </List>
-        </Collapse>
+      {hasChildren && isOpen ? (
+        <ul className={styles.menuList}>
+          {item.children.map((child) => (
+            <SidebarItem
+              key={child.id}
+              item={child}
+              pathname={pathname}
+              depth={depth + 1}
+              openIds={openIds}
+              onToggle={onToggle}
+            />
+          ))}
+        </ul>
       ) : null}
-    </>
+    </li>
   );
 }

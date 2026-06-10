@@ -3,20 +3,11 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, CircularProgress, List, Typography } from "@mui/material";
 import { fetchSidebarRequest } from "@/features/sidebar/SidebarSlice";
 import type { RootState } from "@/store/Store";
 import { getOpenIds } from "./SidebarUtils";
 import SidebarItem from "./SidebarItem";
-import {
-  sidebarHeaderSx,
-  sidebarListAreaSx,
-  sidebarLoadingSx,
-  sidebarMessageSx,
-  sidebarMessageTextSx,
-  sidebarRootSx,
-  sidebarTitleSx,
-} from "./SidebarStyles";
+import styles from "./Sidebar.module.css";
 
 type SidebarProps = {
   width?: number;
@@ -25,9 +16,7 @@ type SidebarProps = {
 export default function Sidebar({ width = 240 }: SidebarProps) {
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const { items, loading, error } = useSelector(
-    (state: RootState) => state.sidebar,
-  );
+  const { items, loading, error } = useSelector((state: RootState) => state.sidebar);
 
   const [openIds, setOpenIds] = React.useState<number[]>([]);
 
@@ -42,32 +31,30 @@ export default function Sidebar({ width = 240 }: SidebarProps) {
   }, [pathname, items]);
 
   const toggleItem = (id: number) => {
-    setOpenIds((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id],
-    );
+    setOpenIds((prev) => (prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]));
   };
 
   return (
-    <Box sx={sidebarRootSx(width)}>
-      <Box sx={sidebarHeaderSx}>
-        <Typography sx={sidebarTitleSx}>병원 운영 메뉴</Typography>
-      </Box>
+    <aside className={styles.sidebarRoot} style={{ width }}>
+      <div className={styles.sidebarHeader}>
+        <h2 className={styles.sidebarTitle}>병원 운영 메뉴</h2>
+      </div>
 
-      <Box sx={sidebarListAreaSx}>
+      <div className={styles.sidebarListArea}>
         {loading ? (
-          <Box sx={sidebarLoadingSx}>
-            <CircularProgress size={24} />
-          </Box>
+          <div className={styles.sidebarLoading}>
+            <div className={styles.spinner} aria-label="로딩 중" />
+          </div>
         ) : error ? (
-          <Box sx={sidebarMessageSx}>
-            <Typography sx={sidebarMessageTextSx}>{error}</Typography>
-          </Box>
+          <div className={styles.sidebarMessage}>
+            <p className={styles.sidebarMessageText}>{error}</p>
+          </div>
         ) : items.length === 0 ? (
-          <Box sx={sidebarMessageSx}>
-            <Typography sx={sidebarMessageTextSx}>표시할 메뉴가 없습니다.</Typography>
-          </Box>
+          <div className={styles.sidebarMessage}>
+            <p className={styles.sidebarMessageText}>표시할 메뉴가 없습니다.</p>
+          </div>
         ) : (
-          <List disablePadding>
+          <ul className={styles.menuList}>
             {items.map((item) => (
               <SidebarItem
                 key={item.id}
@@ -77,9 +64,9 @@ export default function Sidebar({ width = 240 }: SidebarProps) {
                 onToggle={toggleItem}
               />
             ))}
-          </List>
+          </ul>
         )}
-      </Box>
-    </Box>
+      </div>
+    </aside>
   );
 }

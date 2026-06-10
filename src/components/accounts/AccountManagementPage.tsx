@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { Alert, Button, CircularProgress, Typography } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import EmployeeSearchFilter from "@/components/accounts/EmployeeSearchFilter";
 import EmployeeListTable from "@/components/accounts/EmployeeListTable";
 import EmployeeRegisterModal from "@/components/accounts/EmployeeRegisterModal";
@@ -18,7 +16,6 @@ import {
 } from "@/features/accounts/AccountSlice";
 import type { StaffSearchParams } from "@/features/accounts/staffSearchUtils";
 import type { AppDispatch, RootState } from "@/store/Store";
-import { pageTitleSx, registerButtonSx } from "@/components/accounts/AccountPageStyles";
 import styles from "@/components/accounts/AccountPageStyles.module.css";
 
 const PAGE_SIZE = 10;
@@ -116,21 +113,20 @@ const AccountManagementPage = () => {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.pageHeader}>
-        <Typography sx={pageTitleSx}>계정관리</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          sx={registerButtonSx}
-          onClick={() => setRegisterModalOpen(true)}
-        >
+        <h1 className={styles.pageTitle}>계정관리</h1>
+        <button type="button" className={styles.registerButton} onClick={() => setRegisterModalOpen(true)}>
+          <span aria-hidden="true">+</span>
           직원 등록
-        </Button>
+        </button>
       </div>
 
       {error ? (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={handleClearError}>
-          {error}
-        </Alert>
+        <div className={styles.errorAlert} role="alert">
+          <span>{error}</span>
+          <button type="button" className={styles.errorAlertClose} onClick={handleClearError} aria-label="닫기">
+            ×
+          </button>
+        </div>
       ) : null}
 
       <EmployeeSearchFilter
@@ -150,7 +146,7 @@ const AccountManagementPage = () => {
 
       {listStatus.loading ? (
         <div className={styles.loadingCenter}>
-          <CircularProgress />
+          <div className={`${styles.spinner} ${styles.spinnerLg}`} aria-label="로딩 중" />
         </div>
       ) : (
         <EmployeeListTable

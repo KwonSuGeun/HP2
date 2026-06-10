@@ -1,35 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import LocalHospitalOutlinedIcon from "@mui/icons-material/LocalHospitalOutlined";
 import NavUserMenu from "./NavUserMenu";
-import {
-  navAppBarSx,
-  navBrandIconSx,
-  navBrandLinkSx,
-  navBrandSubtitleSx,
-  navBrandTitleSx,
-  navSpacerSx,
-  navToolbarSx,
-} from "./NavStyles";
+import styles from "./Nav.module.css";
 
 export default function Nav() {
   return (
-    <AppBar position="sticky" elevation={0} sx={navAppBarSx}>
-      <Toolbar sx={navToolbarSx}>
-        <Box component={Link} href="/" sx={navBrandLinkSx}>
-          <LocalHospitalOutlinedIcon sx={navBrandIconSx} />
-          <Box>
-            <Typography sx={navBrandTitleSx}>Hospital CORE</Typography>
-            <Typography sx={navBrandSubtitleSx}>병원 운영 시스템</Typography>
-          </Box>
-        </Box>
+    <header className={styles.navBar}>
+      <div className={styles.navToolbar}>
+        <Link href="/" className={styles.brandLink}>
+          <span className={styles.brandIcon} aria-hidden="true">
+            🏥
+          </span>
+          <div className={styles.brandText}>
+            <p className={styles.brandTitle}>Hospital CORE</p>
+            <p className={styles.brandSubtitle}>병원 운영 시스템</p>
+          </div>
+        </Link>
 
-        <Box sx={navSpacerSx} />
+        <div className={styles.navSpacer} />
 
         <NavUserMenu />
-      </Toolbar>
-    </AppBar>
+      </div>
+    </header>
   );
 }
