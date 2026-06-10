@@ -49,26 +49,26 @@ export const POSITION_LABEL: Record<string, string> = {
   원장: "원장",
 };
 
+/** HOSPITAL.STAFF_DEPARTMENT.STAFF_EXTENSION_NO — API 미반환 시 부서별 내선번호 표시 */
+export const DEPARTMENT_EXTENSION_BY_ID: Record<string, string> = {
+  DEPT001: "055-210-1001",
+  DEPT002: "055-220-1001",
+  DEPT003: "055-230-1001",
+  DEPT004: "055-240-1001",
+  DEPT005: "055-250-1001",
+  DEPT006: "055-260-1001",
+  DEPT007: "055-270-1001",
+  DEPT008: "055-280-1001",
+  DEPT009: "055-290-1001",
+  DEPT010: "055-300-1001",
+};
+
 export const SEARCH_CRITERIA_OPTIONS = [
   { value: "name", label: "이름" },
   { value: "employeeId", label: "사번" },
   { value: "department", label: "부서" },
   { value: "phoneNumber", label: "연락처" },
 ];
-
-/** 부서별 내선번호 — API/DB 값이 없을 때 표시용 (백엔드 STAFF_DEPARTMENT 데이터가 있으면 그 값이 우선) */
-export const DEPARTMENT_EXTENSION_BY_ID: Record<string, string> = {
-  DEPT001: "2101",
-  DEPT002: "2201",
-  DEPT003: "2301",
-  DEPT004: "2401",
-  DEPT005: "2501",
-  DEPT006: "2601",
-  DEPT007: "2701",
-  DEPT008: "2801",
-  DEPT009: "2901",
-  DEPT010: "3001",
-};
 
 export const DEFAULT_REGISTER_FORM: EmployeeRegisterForm = {
   profileImage: null,

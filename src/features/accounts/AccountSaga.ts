@@ -58,10 +58,12 @@ function* loadDepartmentExtensionMap() {
           .map((department) => [department.departmentId, department.staffExtensionNo!.trim()]),
       );
       setDepartmentExtensionMap(map);
+      return;
     }
   } catch {
-    // API 실패 시 formConstants 기본 내선번호 사용
+    // ignore
   }
+  setDepartmentExtensionMap({});
 }
 
 function* fetchStaffListSaga(action: PayloadAction<StaffSearchParams>) {

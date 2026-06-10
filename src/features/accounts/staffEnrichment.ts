@@ -1,4 +1,4 @@
-import type { EmployeeRegisterForm, StaffDto } from "./AccountTypes";
+import type { DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
 import { DEPARTMENT_EXTENSION_BY_ID, DEPARTMENT_OPTIONS } from "./formConstants";
 
 const ROLE_CODE_BY_TYPE: Record<string, string> = {
@@ -13,19 +13,46 @@ export function setDepartmentExtensionMap(map: Record<string, string>) {
   departmentExtensionById = { ...DEPARTMENT_EXTENSION_BY_ID, ...map };
 }
 
+export function mergeDepartmentExtensions(
+  ...maps: Array<Record<string, string> | undefined>
+): Record<string, string> {
+  return maps.reduce<Record<string, string>>(
+    (merged, map) => ({ ...merged, ...map }),
+    { ...DEPARTMENT_EXTENSION_BY_ID },
+  );
+}
+
 export function getDepartmentExtension(departmentId: string): string {
   return departmentExtensionById[departmentId]?.trim() ?? "";
 }
 
-function resolveStaffExtensionNo(dto: StaffDto): string | undefined {
+export async function fetchDepartmentExtensionMap(backendUrl: string): Promise<Record<string, string>> {
+  try {
+    const response = await fetch(`${backendUrl}/admin/staff/departments`, { cache: "no-store" });
+    const payload = await response.json();
+    if (!Array.isArray(payload?.data)) return {};
+
+    return mergeDepartmentExtensions(
+      Object.fromEntries(
+        (payload.data as DepartmentDto[])
+          .filter((department) => department.departmentId && department.staffExtensionNo?.trim())
+          .map((department) => [department.departmentId, department.staffExtensionNo!.trim()]),
+      ),
+    );
+  } catch {
+    return { ...DEPARTMENT_EXTENSION_BY_ID };
+  }
+}
+
+function resolveStaffExtensionNo(
+  dto: StaffDto,
+  departmentExtensions: Record<string, string>,
+): string | undefined {
   const fromStaff = dto.staffExtensionNo?.trim();
   if (fromStaff) return fromStaff;
 
-  const fromDepartment = getDepartmentExtension(dto.staffDepartmentId);
-  if (fromDepartment) return fromDepartment;
-
-  const fromFallback = DEPARTMENT_EXTENSION_BY_ID[dto.staffDepartmentId]?.trim();
-  return fromFallback || undefined;
+  const fromDepartment = departmentExtensions[dto.staffDepartmentId]?.trim();
+  return fromDepartment || undefined;
 }
 
 export function inferStaffType(departmentId: string, staffType?: string): string {
@@ -60,14 +87,22 @@ export function parseStaffAddress(staffAddress?: string | null): {
   };
 }
 
-export function enrichStaffDto(dto: StaffDto): StaffDto {
+export function enrichStaffDto(
+  dto: StaffDto,
+  options?: { departmentExtensions?: Record<string, string> },
+): StaffDto {
   const staffType = inferStaffType(dto.staffDepartmentId, dto.staffType);
+  const departmentExtensions = mergeDepartmentExtensions(
+    departmentExtensionById,
+    options?.departmentExtensions,
+  );
+
   return {
     ...dto,
     staffType,
     staffRoleCode: inferStaffRoleCode(staffType, dto.staffRoleCode),
     staffPositionCode: dto.staffPositionCode?.trim() || dto.staffRankCode || "",
-    staffExtensionNo: resolveStaffExtensionNo(dto),
+    staffExtensionNo: resolveStaffExtensionNo(dto, departmentExtensions),
   };
 }
 
