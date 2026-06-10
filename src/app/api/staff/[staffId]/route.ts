@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { enrichStaffDto } from "@/features/accounts/staffEnrichment";
+import type { StaffDto } from "@/features/accounts/AccountTypes";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8081";
 
@@ -11,6 +13,11 @@ export async function GET(
     const { staffId } = await context.params;
     const response = await fetch(`${BACKEND_URL}/admin/staff/${staffId}`, { cache: "no-store" });
     const data = await response.json();
+
+    if (response.ok && data?.data) {
+      data.data = enrichStaffDto(data.data as StaffDto);
+    }
+
     return NextResponse.json(data, { status: response.status });
   } catch {
     return NextResponse.json(

@@ -1,5 +1,13 @@
 import type { Employee, EmployeeStatus, StaffDto } from "./AccountTypes";
 import { DEPARTMENT_OPTIONS, RANK_LABEL } from "./formConstants";
+import {
+  applyStaffDetailCache,
+  enrichStaffDto,
+  inferStaffRoleCode,
+  inferStaffType,
+  parseStaffAddress,
+  readStaffDetailCache,
+} from "./staffEnrichment";
 
 const STAFF_TYPE_PREFIX: Record<string, string> = {
   DOCTOR: "Dr.",
@@ -33,32 +41,50 @@ function formatPhone(phone: string): string {
   return phone;
 }
 
-function resolveDepartmentLabel(departmentId: string): string {
+function formatDateValue(value?: string | null): string {
+  if (!value) return "";
+  return value.length >= 10 ? value.slice(0, 10) : value;
+}
+
+function resolveDepartmentLabel(departmentId: string, departmentName?: string): string {
+  if (departmentName?.trim()) return departmentName;
   return DEPARTMENT_OPTIONS.find((option) => option.value === departmentId)?.label ?? departmentId;
 }
 
-export function staffDtoToEmployee(dto: StaffDto): Employee {
+function normalizeDto(dto: StaffDto, useCache: boolean): StaffDto {
+  const cached = useCache ? applyStaffDetailCache(dto, readStaffDetailCache(dto.staffId)) : dto;
+  return enrichStaffDto(cached);
+}
+
+export function staffDtoToEmployee(dto: StaffDto, options?: { useCache?: boolean }): Employee {
+  const normalized = normalizeDto(dto, options?.useCache ?? false);
+  const staffType = inferStaffType(normalized.staffDepartmentId, normalized.staffType);
+  const staffRoleCode = inferStaffRoleCode(staffType, normalized.staffRoleCode);
+  const address = parseStaffAddress(normalized.staffAddress);
+
   return {
-    id: dto.staffId,
+    id: normalized.staffId,
     profileImage: null,
-    name: formatDisplayName(dto.staffName, dto.staffType ?? ""),
-    birthDate: dto.staffBirthDate ?? "",
-    department: dto.staffDepartmentName ?? resolveDepartmentLabel(dto.staffDepartmentId),
-    departmentId: dto.staffDepartmentId,
-    email: dto.staffEmail ?? "",
-    phoneNumber: formatPhone(dto.staffPhone ?? ""),
-    zipCode: "",
-    baseAddress: "",
-    detailAddress: "",
-    licenseNumber: dto.staffLicenseNo ?? "",
-    employeeId: dto.staffId,
-    position: RANK_LABEL[dto.staffRankCode] ?? dto.staffRankCode,
-    status: toEmployeeStatus(dto.staffStatus),
-    staffType: dto.staffType ?? "",
-    staffRankCode: dto.staffRankCode,
-    staffPositionCode: dto.staffPositionCode ?? "",
-    staffRoleCode: dto.staffRoleCode ?? "",
-    staffExtensionNo: dto.staffExtensionNo ?? "",
-    staffHireDate: dto.staffHireDate ?? "",
+    name: formatDisplayName(normalized.staffName, staffType),
+    birthDate: formatDateValue(normalized.staffBirthDate),
+    department: resolveDepartmentLabel(normalized.staffDepartmentId, normalized.staffDepartmentName),
+    departmentId: normalized.staffDepartmentId,
+    email: normalized.staffEmail ?? "",
+    phoneNumber: formatPhone(normalized.staffPhone ?? ""),
+    zipCode: address.zipCode,
+    baseAddress: address.baseAddress,
+    detailAddress: address.detailAddress,
+    staffAddress: normalized.staffAddress ?? "",
+    licenseNumber: normalized.staffLicenseNo ?? "",
+    employeeId: normalized.staffId,
+    position: RANK_LABEL[normalized.staffRankCode] ?? normalized.staffRankCode,
+    status: toEmployeeStatus(normalized.staffStatus),
+    staffType,
+    staffRankCode: normalized.staffRankCode,
+    staffPositionCode: normalized.staffPositionCode ?? normalized.staffRankCode ?? "",
+    staffRoleCode,
+    staffExtensionNo: normalized.staffExtensionNo ?? "",
+    staffHireDate: formatDateValue(normalized.staffHireDate),
+    rawStaffStatus: normalized.staffStatus ?? "",
   };
 }

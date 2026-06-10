@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, ChangeEvent } from "react";
 import type { EmployeeRegisterForm } from "@/features/accounts/AccountTypes";
 import { DEFAULT_REGISTER_FORM, DEPARTMENT_OPTIONS } from "@/features/accounts/formConstants";
-import { isMedicalStaff } from "@/features/accounts/employeeUtils";
+import { isMedicalStaff, isValidKoreanMobilePhone, KOREAN_MOBILE_PHONE_INVALID_MESSAGE } from "@/features/accounts/employeeUtils";
 import { formatDaumBaseAddress } from "@/lib/daumPostcode";
 import AddressSearchDialog from "@/components/accounts/AddressSearchDialog";
 import type { DaumPostcodeData } from "@/types/daumPostcode";
@@ -81,7 +81,11 @@ const EmployeeRegisterModal = ({
     if (!form.name.trim()) nextErrors.name = "이름은 필수입니다.";
     if (!form.birthDate) nextErrors.birthDate = "생년월일은 필수입니다.";
     if (!form.departmentId) nextErrors.departmentId = "소속 부서는 필수입니다.";
-    if (!form.phoneNumber.trim()) nextErrors.phoneNumber = "휴대폰번호는 필수입니다.";
+    if (!form.phoneNumber.trim()) {
+      nextErrors.phoneNumber = "휴대폰번호는 필수입니다.";
+    } else if (!isValidKoreanMobilePhone(form.phoneNumber)) {
+      nextErrors.phoneNumber = KOREAN_MOBILE_PHONE_INVALID_MESSAGE;
+    }
     if (!form.zipCode.trim() || !form.baseAddress.trim()) {
       nextErrors.baseAddress = "주소(우편번호, 기본주소)는 필수입니다.";
     }

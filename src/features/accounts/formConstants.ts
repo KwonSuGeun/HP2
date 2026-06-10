@@ -42,6 +42,11 @@ export const POSITION_LABEL: Record<string, string> = {
   POS_HEAD: "과장",
   POS_LEAD: "주임",
   POS_MEMBER: "사원",
+  과장: "과장",
+  주임: "주임",
+  사원: "사원",
+  대리: "대리",
+  원장: "원장",
 };
 
 export const SEARCH_CRITERIA_OPTIONS = [
@@ -77,14 +82,17 @@ export const STAFF_TYPE_LABEL: Record<string, string> = {
 };
 
 export const ROLE_LABEL: Record<string, string> = {
-  ROLE_DOCTOR: "ROLE_DOCTOR",
-  ROLE_NURSE: "ROLE_NURSE",
-  ROLE_ADMIN: "ROLE_ADMIN",
-  ROLE_STAFF: "ROLE_STAFF",
+  ROLE_DOCTOR: "의사",
+  ROLE_NURSE: "간호사",
+  ROLE_ADMIN: "원무",
+  ROLE_STAFF: "일반",
 };
 
 export const STATUS_LABEL: Record<string, string> = {
   ACTIVE: "재직",
   LEAVE: "휴직",
   RETIRED: "퇴직",
+  재직: "재직",
+  휴직: "휴직",
+  퇴직: "퇴직",
 };

@@ -20,6 +20,7 @@ import {
 import type { ApiResponse, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
 import { formToStaffRegisterRequest } from "./employeeUtils";
 import { staffDtoToEmployee } from "./staffMapper";
+import { writeStaffDetailCache } from "./staffEnrichment";
 import {
   applyClientFilters,
   buildStaffListRequest,
@@ -59,7 +60,7 @@ function* fetchStaffDetailSaga(action: PayloadAction<string>) {
       fetchStaffDetailAPI,
       action.payload,
     );
-    yield put(fetchStaffDetailSuccess(staffDtoToEmployee(assertApiSuccess(response.data))));
+    yield put(fetchStaffDetailSuccess(staffDtoToEmployee(assertApiSuccess(response.data), { useCache: true })));
   } catch (e) {
     yield put(fetchStaffDetailFailure(getErrorMessage(e, "직원 상세 정보를 불러오지 못했습니다.")));
   }
@@ -72,6 +73,7 @@ function* registerStaffSaga(
     const request = formToStaffRegisterRequest(action.payload.form);
     const response: AxiosResponse<ApiResponse<null>> = yield call(registerStaffAPI, request);
     assertApiSuccess(response.data);
+    writeStaffDetailCache(action.payload.form.employeeId.trim(), action.payload.form);
     yield put(registerStaffSuccess());
     yield put(fetchStaffListRequest(action.payload.searchParams));
   } catch (e) {
