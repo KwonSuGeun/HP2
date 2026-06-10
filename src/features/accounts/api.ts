@@ -1,6 +1,6 @@
 import { api } from "@/lib/Axios";
 import { getStaffApiBase } from "@/lib/api/staffApiPaths";
-import type { ApiResponse, StaffDto, StaffListRequest, StaffRegisterRequest } from "./AccountTypes";
+import type { ApiResponse, DepartmentDto, StaffDto, StaffListRequest, StaffRegisterRequest } from "./AccountTypes";
 
 const staffBase = getStaffApiBase();
 
@@ -18,4 +18,8 @@ export const registerStaffAPI = (request: StaffRegisterRequest) => {
 
 export const deleteStaffAPI = (staffId: string) => {
   return api.delete<ApiResponse<null>>(`${staffBase}/${staffId}`);
+};
+
+export const fetchDepartmentListAPI = () => {
+  return api.get<ApiResponse<DepartmentDto[]>>(`${staffBase}/departments`);
 };

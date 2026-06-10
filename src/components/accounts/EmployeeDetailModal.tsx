@@ -125,8 +125,10 @@ const BasicInfoCard = ({ icon, label, value, underEmailDept }: BasicInfoCardProp
   <div
     className={`${styles.detailBasicCard} ${underEmailDept ? styles.detailBasicCardUnderDept : ""}`}
   >
-    <span className={styles.detailBasicCardIcon}>{icon}</span>
-    <p className={styles.detailBasicCardLabel}>{label}</p>
+    <div className={styles.detailBasicCardHeader}>
+      <span className={styles.detailBasicCardIcon}>{icon}</span>
+      <p className={styles.detailBasicCardLabel}>{label}</p>
+    </div>
     <p className={styles.detailBasicCardValue}>{value}</p>
   </div>
 );
@@ -313,8 +315,8 @@ const EmployeeDetailModal = ({
           )}
         </div>
 
-        <div className={styles.modalFooterBetween}>
-          {employee && !loading && onDelete ? (
+        {employee && !loading && onDelete ? (
+          <div className={styles.modalFooter}>
             <button
               type="button"
               className={styles.modalDeleteButton}
@@ -324,13 +326,8 @@ const EmployeeDetailModal = ({
               <IconTrash className={styles.modalDeleteIcon} />
               {deleting ? "삭제 중..." : "삭제하기"}
             </button>
-          ) : (
-            <span aria-hidden="true" />
-          )}
-          <button type="button" className={styles.modalCancelButton} onClick={onClose} disabled={deleting}>
-            닫기
-          </button>
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -56,6 +56,20 @@ export const SEARCH_CRITERIA_OPTIONS = [
   { value: "phoneNumber", label: "연락처" },
 ];
 
+/** 부서별 내선번호 — API/DB 값이 없을 때 표시용 (백엔드 STAFF_DEPARTMENT 데이터가 있으면 그 값이 우선) */
+export const DEPARTMENT_EXTENSION_BY_ID: Record<string, string> = {
+  DEPT001: "2101",
+  DEPT002: "2201",
+  DEPT003: "2301",
+  DEPT004: "2401",
+  DEPT005: "2501",
+  DEPT006: "2601",
+  DEPT007: "2701",
+  DEPT008: "2801",
+  DEPT009: "2901",
+  DEPT010: "3001",
+};
+
 export const DEFAULT_REGISTER_FORM: EmployeeRegisterForm = {
   profileImage: null,
   employeeId: "",

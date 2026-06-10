@@ -72,6 +72,12 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+export interface DepartmentDto {
+  departmentId: string;
+  departmentName: string;
+  staffExtensionNo?: string;
+}
+
 export interface StaffDto {
   staffId: string;
   staffName: string;

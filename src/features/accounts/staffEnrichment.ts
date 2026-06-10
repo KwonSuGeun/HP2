@@ -1,11 +1,32 @@
 import type { EmployeeRegisterForm, StaffDto } from "./AccountTypes";
-import { DEPARTMENT_OPTIONS } from "./formConstants";
+import { DEPARTMENT_EXTENSION_BY_ID, DEPARTMENT_OPTIONS } from "./formConstants";
 
 const ROLE_CODE_BY_TYPE: Record<string, string> = {
   DOC: "ROLE_DOCTOR",
   NUR: "ROLE_NURSE",
   ADM: "ROLE_ADMIN",
 };
+
+let departmentExtensionById: Record<string, string> = { ...DEPARTMENT_EXTENSION_BY_ID };
+
+export function setDepartmentExtensionMap(map: Record<string, string>) {
+  departmentExtensionById = { ...DEPARTMENT_EXTENSION_BY_ID, ...map };
+}
+
+export function getDepartmentExtension(departmentId: string): string {
+  return departmentExtensionById[departmentId]?.trim() ?? "";
+}
+
+function resolveStaffExtensionNo(dto: StaffDto): string | undefined {
+  const fromStaff = dto.staffExtensionNo?.trim();
+  if (fromStaff) return fromStaff;
+
+  const fromDepartment = getDepartmentExtension(dto.staffDepartmentId);
+  if (fromDepartment) return fromDepartment;
+
+  const fromFallback = DEPARTMENT_EXTENSION_BY_ID[dto.staffDepartmentId]?.trim();
+  return fromFallback || undefined;
+}
 
 export function inferStaffType(departmentId: string, staffType?: string): string {
   if (staffType?.trim()) return staffType.trim();
@@ -46,6 +67,7 @@ export function enrichStaffDto(dto: StaffDto): StaffDto {
     staffType,
     staffRoleCode: inferStaffRoleCode(staffType, dto.staffRoleCode),
     staffPositionCode: dto.staffPositionCode?.trim() || dto.staffRankCode || "",
+    staffExtensionNo: resolveStaffExtensionNo(dto),
   };
 }
 
