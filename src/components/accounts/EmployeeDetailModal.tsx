@@ -1,9 +1,15 @@
-"use client"
+"use client";
 
+import type { ReactNode } from "react";
 import type { Employee } from "@/features/accounts/AccountTypes";
-import { POSITION_LABEL, RANK_LABEL, ROLE_LABEL, STAFF_TYPE_LABEL, STATUS_LABEL } from "@/features/accounts/formConstants";
+import {
+  POSITION_LABEL,
+  RANK_LABEL,
+  ROLE_LABEL,
+  STAFF_TYPE_LABEL,
+  STATUS_LABEL,
+} from "@/features/accounts/formConstants";
 import { formatAddress } from "@/features/accounts/employeeUtils";
-import { getStatusBadgeClass } from "./accountUiUtils";
 import styles from "./AccountPageStyles.module.css";
 
 type EmployeeDetailModalProps = {
@@ -15,20 +21,132 @@ type EmployeeDetailModalProps = {
   onDelete?: (employee: Employee) => void;
 };
 
-const DetailField = ({ label, value }: { label: string; value: string }) => (
-  <div>
-    <p className={styles.detailFieldLabel}>{label}</p>
-    <p className={styles.detailFieldValue}>{value || "-"}</p>
-  </div>
-);
-
 const LIST_STATUS_LABEL: Record<Employee["status"], string> = {
   ACTIVE: "재직 중",
   LEAVE: "휴직",
   RETIRED: "퇴직",
 };
 
-/** 직원 상세보기 — 등록 입력 + 시스템 자동 생성 필드 전체 표시 */
+const displayValue = (value?: string | null) => (value?.trim() ? value.trim() : "-");
+
+type IconProps = { className?: string };
+
+const IconUser = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M20 21a8 8 0 0 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconCalendar = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+const IconMail = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
+    <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+const IconBuilding = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M4 21V7l8-4 8 4v14M9 21v-4h6v4M10 10h.01M14 10h.01M10 14h.01M14 14h.01"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconMobile = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M11 18h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+const IconBadge = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 3 14.5 8.5 20 9l-4 4 1 5.5L12 16.5 7 18.5 8 13 4 9l5.5-.5L12 3Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const IconMapPin = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <circle cx="12" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+  </svg>
+);
+
+const IconSettings = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+    <path
+      d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconTrash = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M4 7h16M9 7V5h6v2M10 11v6M14 11v6M6 7l1 12h10l1-12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+type BasicInfoCardProps = {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  underEmailDept?: boolean;
+};
+
+const BasicInfoCard = ({ icon, label, value, underEmailDept }: BasicInfoCardProps) => (
+  <div
+    className={`${styles.detailBasicCard} ${underEmailDept ? styles.detailBasicCardUnderDept : ""}`}
+  >
+    <span className={styles.detailBasicCardIcon}>{icon}</span>
+    <p className={styles.detailBasicCardLabel}>{label}</p>
+    <p className={styles.detailBasicCardValue}>{value}</p>
+  </div>
+);
+
+type SystemInfoCellProps = {
+  label: string;
+  field: string;
+  value: string;
+};
+
+const SystemInfoCell = ({ label, field, value }: SystemInfoCellProps) => (
+  <div className={styles.detailSystemCell}>
+    <p className={styles.detailSystemCellLabel}>
+      {label} <span className={styles.detailSystemCellField}>({field})</span>
+    </p>
+    <p className={styles.detailSystemCellValue}>{value}</p>
+  </div>
+);
+
+/** 직원 상세보기 — 2단 레이아웃 (프로필 사이드바 + 기본/시스템 정보) */
 const EmployeeDetailModal = ({
   open,
   employee,
@@ -46,10 +164,25 @@ const EmployeeDetailModal = ({
     onDelete(employee);
   };
 
+  const staffTypeLabel = employee
+    ? STAFF_TYPE_LABEL[employee.staffType] ?? employee.staffType
+    : "-";
+  const rankLabel = employee ? RANK_LABEL[employee.staffRankCode] ?? employee.staffRankCode : "-";
+  const positionLabel = employee
+    ? POSITION_LABEL[employee.staffPositionCode] ?? employee.staffPositionCode
+    : "-";
+  const roleLabel = employee ? ROLE_LABEL[employee.staffRoleCode] ?? employee.staffRoleCode : "-";
+  const statusLabel = employee
+    ? STATUS_LABEL[employee.rawStaffStatus ?? ""] ??
+      STATUS_LABEL[employee.status] ??
+      employee.rawStaffStatus ??
+      employee.status
+    : "-";
+
   return (
     <div className={styles.modalOverlay} role="presentation" onClick={onClose}>
       <div
-        className={styles.modalPanel}
+        className={`${styles.modalPanel} ${styles.modalPanelDetail}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="employee-detail-title"
@@ -64,7 +197,7 @@ const EmployeeDetailModal = ({
           </button>
         </div>
 
-        <div className={styles.modalBody}>
+        <div className={`${styles.modalBody} ${styles.detailModalBody}`}>
           {loading ? (
             <div className={styles.detailLoadingCenter}>
               <div className={`${styles.spinner} ${styles.spinnerLg}`} aria-label="로딩 중" />
@@ -72,71 +205,111 @@ const EmployeeDetailModal = ({
           ) : !employee ? (
             <div className={styles.detailEmpty}>직원 정보를 불러오지 못했습니다.</div>
           ) : (
-            <>
-              <div className={styles.detailProfile}>
-                <div className={`${styles.profileAvatar} ${styles.profileAvatarSm}`}>
-                  {employee.profileImage ? (
-                    <img src={employee.profileImage} alt={`${employee.name} 프로필`} />
-                  ) : (
-                    <span className={styles.userIconSm} aria-hidden="true">
-                      👤
-                    </span>
-                  )}
-                </div>
-                <div className={styles.detailProfileInfo}>
-                  <h3 className={styles.detailName}>{employee.name}</h3>
-                  <p className={styles.detailSubText}>
+            <div className={styles.detailLayout}>
+              <aside className={styles.detailSidebar}>
+                <div className={styles.detailSidebarProfile}>
+                  <div className={styles.detailSidebarAvatar}>
+                    {employee.profileImage ? (
+                      <img src={employee.profileImage} alt={`${employee.name} 프로필`} />
+                    ) : (
+                      <IconUser className={styles.detailSidebarAvatarFallback} />
+                    )}
+                  </div>
+                  <h3 className={styles.detailSidebarName}>{employee.name}</h3>
+                  <p className={styles.detailSidebarSubText}>
                     {employee.employeeId} · {employee.department}
                   </p>
-                  <span className={getStatusBadgeClass(employee.status)}>
+                  <span className={styles.detailStatusPill}>
+                    <span className={styles.detailStatusDot} aria-hidden="true" />
                     {LIST_STATUS_LABEL[employee.status]}
                   </span>
                 </div>
-              </div>
+              </aside>
 
-              <h4 className={styles.detailSectionTitle}>등록 정보</h4>
-              <div className={`${styles.detailGrid} ${styles.detailGridSection}`}>
-                <DetailField label="이름" value={employee.name} />
-                <DetailField label="생년월일" value={employee.birthDate} />
-                <DetailField label="소속 부서" value={employee.department} />
-                <DetailField label="이메일" value={employee.email} />
-                <DetailField label="휴대폰번호" value={employee.phoneNumber} />
-                <DetailField label="면허번호" value={employee.licenseNumber} />
-                <div className={styles.detailGridColFull}>
-                  <p className={styles.detailFieldLabel}>주소</p>
-                  <p className={styles.detailFieldValue}>{formatAddress(employee)}</p>
-                </div>
-              </div>
+              <div className={styles.detailMain}>
+                <section className={styles.detailSection}>
+                  <h4 className={styles.detailSectionHeading}>
+                    <IconUser className={styles.detailSectionIcon} />
+                    기본 정보
+                  </h4>
+                  <div className={styles.detailBasicGrid}>
+                    <BasicInfoCard
+                      icon={<IconUser className={styles.detailIcon} />}
+                      label="이름"
+                      value={displayValue(employee.name)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconCalendar className={styles.detailIcon} />}
+                      label="생년월일"
+                      value={displayValue(employee.birthDate)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconMail className={styles.detailIcon} />}
+                      label="이메일"
+                      value={displayValue(employee.email)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconBuilding className={styles.detailIcon} />}
+                      label="소속 부서"
+                      value={displayValue(employee.department)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconMobile className={styles.detailIcon} />}
+                      label="휴대폰번호"
+                      value={displayValue(employee.phoneNumber)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconBadge className={styles.detailIcon} />}
+                      label="면허번호"
+                      value={displayValue(employee.licenseNumber)}
+                    />
+                    <BasicInfoCard
+                      icon={<IconMapPin className={styles.detailIcon} />}
+                      label="주소"
+                      value={formatAddress(employee)}
+                      underEmailDept
+                    />
+                  </div>
+                </section>
 
-              <hr className={styles.detailDivider} />
-
-              <h4 className={styles.detailSectionTitle}>시스템 자동 생성 정보</h4>
-              <div className={styles.detailGrid}>
-                <DetailField label="사번 [STAFF_ID]" value={employee.employeeId} />
-                <DetailField
-                  label="직군 [STAFF_TYPE]"
-                  value={STAFF_TYPE_LABEL[employee.staffType] ?? employee.staffType}
-                />
-                <DetailField
-                  label="직급 [STAFF_RANK_CODE]"
-                  value={RANK_LABEL[employee.staffRankCode] ?? employee.staffRankCode}
-                />
-                <DetailField
-                  label="직책 [STAFF_POSITION_CODE]"
-                  value={POSITION_LABEL[employee.staffPositionCode] ?? employee.staffPositionCode}
-                />
-                <DetailField
-                  label="권한 [STAFF_ROLE_CODE]"
-                  value={ROLE_LABEL[employee.staffRoleCode] ?? employee.staffRoleCode}
-                />
-                <DetailField label="내선번호 [STAFF_EXTENSION_NO]" value={employee.staffExtensionNo} />
-                <DetailField
-                  label="재직 상태 [STAFF_STATUS]"
-                  value={STATUS_LABEL[employee.rawStaffStatus ?? ""] ?? STATUS_LABEL[employee.status] ?? employee.rawStaffStatus ?? employee.status}
-                />
-                <DetailField label="입사일 [STAFF_HIRE_DATE]" value={employee.staffHireDate} />
+                <section className={styles.detailSection}>
+                  <h4 className={styles.detailSectionHeading}>
+                    <IconSettings className={styles.detailSectionIcon} />
+                    시스템 정보
+                  </h4>
+                  <div className={styles.detailSystemPanel}>
+                    <SystemInfoCell label="사번" field="STAFF_ID" value={displayValue(employee.employeeId)} />
+                    <SystemInfoCell
+                      label="직급"
+                      field="STAFF_RANK_CODE"
+                      value={displayValue(rankLabel)}
+                    />
+                    <SystemInfoCell
+                      label="직급"
+                      field="STAFF_TYPE"
+                      value={displayValue(staffTypeLabel)}
+                    />
+                    <SystemInfoCell
+                      label="내선번호"
+                      field="STAFF_EXTENSION_NO"
+                      value={displayValue(employee.staffExtensionNo)}
+                    />
+                    <SystemInfoCell
+                      label="직책"
+                      field="STAFF_POSITION_CODE"
+                      value={displayValue(positionLabel)}
+                    />
+                    <SystemInfoCell
+                      label="입사일"
+                      field="STAFF_HIRE_DATE"
+                      value={displayValue(employee.staffHireDate)}
+                    />
+                    <SystemInfoCell label="권한" field="STAFF_ROLE_CODE" value={displayValue(roleLabel)} />
+                    <SystemInfoCell label="재직 상태" field="STAFF_STATUS" value={displayValue(statusLabel)} />
+                  </div>
+                </section>
               </div>
-            </>
+            </div>
           )}
         </div>
 
@@ -148,6 +321,7 @@ const EmployeeDetailModal = ({
               onClick={handleDelete}
               disabled={deleting}
             >
+              <IconTrash className={styles.modalDeleteIcon} />
               {deleting ? "삭제 중..." : "삭제하기"}
             </button>
           ) : (
