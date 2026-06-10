@@ -17,6 +17,8 @@ declare global {
         onresize?: (size: { width: number; height: number }) => void;
         width?: string | number;
         height?: string | number;
+        maxSuggestItems?: number;
+        hideMapBtn?: boolean;
       }) => {
         embed: (element: HTMLElement) => void;
         open: () => void;

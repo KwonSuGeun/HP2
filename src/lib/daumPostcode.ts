@@ -58,13 +58,27 @@ export function formatDaumBaseAddress(data: DaumPostcodeData): string {
   return address;
 }
 
-const DEFAULT_EMBED_HEIGHT = 480;
+type EmbedDaumPostcodeOptions = {
+  onResize?: (height: number) => void;
+};
 
-/** 검색 UI를 컨테이너에 임베드 */
+function syncEmbedHeight(container: HTMLElement, height: number) {
+  const nextHeight = `${height}px`;
+  container.style.height = nextHeight;
+
+  const iframe = container.querySelector("iframe");
+  if (iframe instanceof HTMLIFrameElement) {
+    iframe.style.width = "100%";
+    iframe.style.height = nextHeight;
+    iframe.style.border = "0";
+  }
+}
+
+/** 검색 UI를 컨테이너에 임베드 — 높이는 onresize로만 조절 (Daum 가이드 권장) */
 export function embedDaumPostcode(
   container: HTMLElement,
   onComplete: (data: DaumPostcodeData) => void,
-  height: number = DEFAULT_EMBED_HEIGHT,
+  options?: EmbedDaumPostcodeOptions,
 ): void {
   if (!window.daum?.Postcode) {
     throw new Error("Daum Postcode가 로드되지 않았습니다.");
@@ -72,14 +86,16 @@ export function embedDaumPostcode(
 
   container.replaceChildren();
   container.style.width = "100%";
-  container.style.height = `${height}px`;
+  container.style.height = "0";
 
   new window.daum.Postcode({
     oncomplete: onComplete,
     onresize: (size) => {
-      container.style.height = `${size.height}px`;
+      syncEmbedHeight(container, size.height);
+      options?.onResize?.(size.height);
     },
+    hideMapBtn: true,
     width: "100%",
-    height,
+    height: "100%",
   }).embed(container);
 }

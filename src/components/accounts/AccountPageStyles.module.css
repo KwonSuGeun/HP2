@@ -361,6 +361,12 @@
   max-width: 600px;
 }
 
+.modalPanelAddress {
+  max-width: 600px;
+  height: auto;
+  max-height: 90vh;
+}
+
 .modalHeader {
   display: flex;
   align-items: center;
@@ -393,8 +399,13 @@
 
 .modalBodyAddress {
   padding: 0;
-  height: 480px;
   position: relative;
+  flex: 0 1 auto;
+  max-height: calc(90vh - 72px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modalFooter {
@@ -1155,8 +1166,12 @@
 
 .addressEmbedContainer {
   width: 100%;
-  min-height: 480px;
-  height: 480px;
+}
+
+.addressEmbedContainer iframe {
+  display: block;
+  width: 100% !important;
+  border: 0;
 }
 
 .spinner {
