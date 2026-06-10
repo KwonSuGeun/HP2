@@ -12,8 +12,10 @@ import {
   fetchStaffDetailRequest,
   fetchStaffListRequest,
   registerStaffRequest,
+  removeEmployeeFromList,
   resetStatus,
 } from "@/features/accounts/AccountSlice";
+import { removeStaffDetailCache } from "@/features/accounts/staffEnrichment";
 import type { StaffSearchParams } from "@/features/accounts/staffSearchUtils";
 import type { AppDispatch, RootState } from "@/store/Store";
 import styles from "@/components/accounts/AccountPageStyles.module.css";
@@ -101,6 +103,20 @@ const AccountManagementPage = () => {
     dispatch(clearSelectedEmployee());
   };
 
+  const handleDeleteEmployee = (employee: Employee) => {
+    const nextCount = employees.filter((item) => item.employeeId !== employee.employeeId).length;
+    const nextTotalPages = Math.max(1, Math.ceil(nextCount / PAGE_SIZE));
+
+    removeStaffDetailCache(employee.employeeId);
+    dispatch(removeEmployeeFromList(employee.employeeId));
+    setDetailOpen(false);
+    dispatch(clearSelectedEmployee());
+
+    if (page > nextTotalPages) {
+      setPage(nextTotalPages);
+    }
+  };
+
   const handleClearError = () => {
     dispatch(resetStatus("listStatus"));
     dispatch(resetStatus("detailStatus"));
@@ -170,6 +186,7 @@ const AccountManagementPage = () => {
         employee={selectedEmployee}
         loading={detailStatus.loading}
         onClose={handleDetailClose}
+        onDelete={handleDeleteEmployee}
       />
     </div>
   );
