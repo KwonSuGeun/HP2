@@ -361,6 +361,12 @@
   max-width: 600px;
 }
 
+.modalPanelAddress {
+  max-width: 600px;
+  height: auto;
+  max-height: 90vh;
+}
+
 .modalHeader {
   display: flex;
   align-items: center;
@@ -393,8 +399,13 @@
 
 .modalBodyAddress {
   padding: 0;
-  height: 480px;
   position: relative;
+  flex: 0 1 auto;
+  max-height: calc(90vh - 72px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modalFooter {
@@ -414,6 +425,203 @@
   border-top: 1px solid var(--line);
 }
 
+.modalPanelDetail {
+  max-width: 1100px;
+  min-height: min(680px, 90vh);
+}
+
+.modalPanelRegister {
+  max-width: 1100px;
+}
+
+.registerModalBody {
+  padding: 24px 28px 28px;
+}
+
+.registerFormLayout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .registerFormLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.registerProfileSidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 20px;
+  width: 100%;
+  background: #f3f7fb;
+  border-radius: 16px;
+}
+
+.registerProfileAvatar {
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.registerProfileAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.registerProfileIcon {
+  width: 64px;
+  height: 64px;
+}
+
+.registerUploadButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 220px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.registerUploadButton:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.registerUploadIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.registerUploadHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
+  text-align: center;
+  max-width: 220px;
+}
+
+.registerFormMain {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.registerFormSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.registerSectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--brand-strong);
+}
+
+.registerSectionIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--brand);
+  flex-shrink: 0;
+}
+
+.registerFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+@media (max-width: 640px) {
+  .registerFieldGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.registerField {
+  min-width: 0;
+}
+
+.formRequiredMark {
+  color: #e53935;
+  font-weight: 700;
+}
+
+.inputDate {
+  color: var(--ink);
+}
+
+.registerAddressBox {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.registerAddressZipRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.registerAddressZipField {
+  min-width: 0;
+}
+
+.registerZipButton {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.registerZipButton:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.registerAddressField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .modalDeleteButton {
   min-width: 88px;
   height: 40px;
@@ -425,6 +633,15 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.modalDeleteIcon {
+  width: 16px;
+  height: 16px;
 }
 
 .modalDeleteButton:hover:not(:disabled) {
@@ -503,10 +720,10 @@
 
 .formLabel {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 6px;
 }
 
 .formLabelSmall {
@@ -619,75 +836,315 @@
   min-height: 280px;
 }
 
-.detailProfile {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+.detailModalBody {
+  padding: 24px 28px 28px;
 }
 
-.detailProfileInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.detailName {
-  margin: 0;
-  font-weight: 800;
-  font-size: 20px;
-}
-
-.detailSubText {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.detailSectionTitle {
-  margin: 0 0 12px;
-  font-weight: 800;
-  font-size: 14px;
-  color: var(--brand-strong);
-}
-
-.detailDivider {
-  border: none;
-  border-top: 1px solid var(--line);
-  margin: 16px 0;
-}
-
-.detailGrid {
+.detailLayout {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
 }
 
-@media (min-width: 600px) {
-  .detailGrid {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 820px) {
+  .detailLayout {
+    grid-template-columns: 1fr;
   }
 }
 
-.detailGridSection {
-  margin-bottom: 20px;
+.detailSidebar {
+  background: #f3f7fb;
+  border-radius: 16px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100%;
 }
 
-.detailGridColFull {
-  grid-column: 1 / -1;
+.detailSidebarProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  width: 100%;
 }
 
-.detailFieldLabel {
+.detailSidebarAvatar {
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.detailSidebarAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detailSidebarAvatarFallback {
+  width: 64px;
+  height: 64px;
+}
+
+.detailSidebarName {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.detailSidebarSubText {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.detailStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(11, 91, 143, 0.1);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detailStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.detailSidebarList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.detailSidebarItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.detailSidebarItemIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(11, 91, 143, 0.1);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.detailSidebarItemLabel {
+  margin: 0 0 2px;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.detailSidebarItemValue {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.detailMain {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailSectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--brand-strong);
+}
+
+.detailSectionIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--brand);
+}
+
+.detailIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.detailBasicGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .detailBasicGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .detailBasicGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailBasicCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px;
+  min-height: 96px;
+}
+
+.detailBasicCardUnderDept {
+  grid-column: 3 / 5;
+}
+
+@media (max-width: 900px) {
+  .detailBasicCardUnderDept {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .detailBasicCardUnderDept {
+    grid-column: auto;
+  }
+}
+
+.detailBasicCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detailBasicCardIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(11, 91, 143, 0.08);
+  color: var(--brand);
+}
+
+.detailBasicCardLabel {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 28px;
+  color: var(--muted);
+}
+
+.detailBasicCardValue {
+  margin: 12px 0 0;
+  padding-left: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.detailSystemPanel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+@media (max-width: 640px) {
+  .detailSystemPanel {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailSystemCell {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.detailSystemCell:nth-child(2n) {
+  border-right: none;
+}
+
+.detailSystemCell:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  .detailSystemCell {
+    border-right: none;
+  }
+
+  .detailSystemCell:not(:last-child) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .detailSystemCell:last-child {
+    border-bottom: none;
+  }
+}
+
+.detailSystemCellLabel {
+  margin: 0 0 6px;
   font-size: 12px;
   font-weight: 600;
   color: var(--muted);
-  margin: 0 0 2px;
 }
 
-.detailFieldValue {
-  font-size: 14px;
-  color: var(--ink);
+.detailSystemCellField {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.detailSystemCellValue {
   margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .addressLoadingOverlay {
@@ -709,8 +1166,12 @@
 
 .addressEmbedContainer {
   width: 100%;
-  min-height: 480px;
-  height: 480px;
+}
+
+.addressEmbedContainer iframe {
+  display: block;
+  width: 100% !important;
+  border: 0;
 }
 
 .spinner {

@@ -11,8 +11,6 @@ type AddressSearchDialogProps = {
   onSelect: (data: DaumPostcodeData) => void;
 };
 
-const EMBED_HEIGHT = 480;
-
 /** Daum 우편번호 API — 사용자 직접 검색 */
 const AddressSearchDialog = ({
   open,
@@ -24,6 +22,7 @@ const AddressSearchDialog = ({
   const onCloseRef = useRef(onClose);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [embedHeight, setEmbedHeight] = useState(0);
 
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -34,12 +33,14 @@ const AddressSearchDialog = ({
     if (!open) {
       setLoading(true);
       setError(null);
+      setEmbedHeight(0);
       return;
     }
 
     let cancelled = false;
     setLoading(true);
     setError(null);
+    setEmbedHeight(0);
 
     const mountEmbed = async () => {
       try {
@@ -59,7 +60,13 @@ const AddressSearchDialog = ({
             onSelectRef.current(data);
             onCloseRef.current();
           },
-          EMBED_HEIGHT,
+          {
+            onResize: (height) => {
+              if (!cancelled) {
+                setEmbedHeight(height);
+              }
+            },
+          },
         );
 
         if (!cancelled) {
@@ -90,7 +97,7 @@ const AddressSearchDialog = ({
       onClick={onClose}
     >
       <div
-        className={`${styles.modalPanel} ${styles.modalPanelSm}`}
+        className={`${styles.modalPanel} ${styles.modalPanelAddress}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="address-search-title"
@@ -105,12 +112,13 @@ const AddressSearchDialog = ({
           </button>
         </div>
 
-        <div className={`${styles.modalBody} ${styles.modalBodyAddress}`}>
+        <div className={styles.modalBodyAddress}>
           {error ? <div className={styles.addressError}>{error}</div> : null}
 
           <div
             ref={containerRef}
             className={styles.addressEmbedContainer}
+            style={embedHeight > 0 ? { height: embedHeight } : undefined}
             aria-hidden={Boolean(error)}
           />
 

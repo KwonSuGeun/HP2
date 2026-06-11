@@ -1,5 +1,6 @@
 import type { Employee, EmployeeStatus, StaffDto } from "./AccountTypes";
 import { DEPARTMENT_OPTIONS, RANK_LABEL } from "./formConstants";
+import { resolveStaffProfileImage } from "./staffProfileImages";
 import {
   applyStaffDetailCache,
   enrichStaffDto,
@@ -64,7 +65,7 @@ export function staffDtoToEmployee(dto: StaffDto, options?: { useCache?: boolean
 
   return {
     id: normalized.staffId,
-    profileImage: null,
+    profileImage: resolveStaffProfileImage(normalized.staffName),
     name: formatDisplayName(normalized.staffName, staffType),
     birthDate: formatDateValue(normalized.staffBirthDate),
     department: resolveDepartmentLabel(normalized.staffDepartmentId, normalized.staffDepartmentName),

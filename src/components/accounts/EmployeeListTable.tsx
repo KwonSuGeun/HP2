@@ -37,13 +37,14 @@ const EmployeeListTable = ({
               <th className={styles.tableHeadCell}>부서</th>
               <th className={styles.tableHeadCell}>직급</th>
               <th className={styles.tableHeadCell}>연락처</th>
+              <th className={styles.tableHeadCell}>내선번호</th>
               <th className={`${styles.tableHeadCell} ${styles.tableHeadCellStatus}`}>상태</th>
             </tr>
           </thead>
           <tbody>
             {employees.length === 0 ? (
               <tr>
-                <td className={styles.tableEmptyCell} colSpan={7}>
+                <td className={styles.tableEmptyCell} colSpan={8}>
                   검색 결과가 없습니다.
                 </td>
               </tr>
@@ -70,6 +71,7 @@ const EmployeeListTable = ({
                   <td className={styles.tableBodyCell}>{employee.department}</td>
                   <td className={styles.tableBodyCell}>{employee.position}</td>
                   <td className={styles.tableBodyCell}>{employee.phoneNumber}</td>
+                  <td className={styles.tableBodyCell}>{employee.staffExtensionNo || "-"}</td>
                   <td className={styles.tableBodyCell}>
                     <span className={getStatusBadgeClass(employee.status)}>
                       {TABLE_STATUS_LABEL[employee.status]}

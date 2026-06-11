@@ -49,6 +49,20 @@ export const POSITION_LABEL: Record<string, string> = {
   원장: "원장",
 };
 
+/** HOSPITAL.STAFF_DEPARTMENT.STAFF_EXTENSION_NO — API 미반환 시 부서별 내선번호 표시 */
+export const DEPARTMENT_EXTENSION_BY_ID: Record<string, string> = {
+  DEPT001: "055-210-1001",
+  DEPT002: "055-220-1001",
+  DEPT003: "055-230-1001",
+  DEPT004: "055-240-1001",
+  DEPT005: "055-250-1001",
+  DEPT006: "055-260-1001",
+  DEPT007: "055-270-1001",
+  DEPT008: "055-280-1001",
+  DEPT009: "055-290-1001",
+  DEPT010: "055-300-1001",
+};
+
 export const SEARCH_CRITERIA_OPTIONS = [
   { value: "name", label: "이름" },
   { value: "employeeId", label: "사번" },

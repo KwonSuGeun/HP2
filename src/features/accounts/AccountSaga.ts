@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { PayloadAction } from "@reduxjs/toolkit";
 import {
   deleteStaffAPI,
+  fetchDepartmentListAPI,
   fetchStaffDetailAPI,
   fetchStaffListAPI,
   registerStaffAPI,
@@ -21,10 +22,10 @@ import {
   registerStaffRequest,
   registerStaffSuccess,
 } from "./AccountSlice";
-import type { ApiResponse, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
+import type { ApiResponse, DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
 import { formToStaffRegisterRequest } from "./employeeUtils";
 import { staffDtoToEmployee } from "./staffMapper";
-import { writeStaffDetailCache, removeStaffDetailCache } from "./staffEnrichment";
+import { setDepartmentExtensionMap, writeStaffDetailCache, removeStaffDetailCache } from "./staffEnrichment";
 import {
   applyClientFilters,
   buildStaffListRequest,
@@ -46,12 +47,35 @@ function assertApiSuccess<T>(response: ApiResponse<T>): T {
   return response.data;
 }
 
+function* loadDepartmentExtensionMap() {
+  try {
+    const response: AxiosResponse<ApiResponse<DepartmentDto[]>> = yield call(fetchDepartmentListAPI);
+    const payload = response.data;
+    if (String(payload?.code) === "200" && Array.isArray(payload.data)) {
+      const map = Object.fromEntries(
+        payload.data
+          .filter((department) => department.departmentId && department.staffExtensionNo?.trim())
+          .map((department) => [department.departmentId, department.staffExtensionNo!.trim()]),
+      );
+      setDepartmentExtensionMap(map);
+      return;
+    }
+  } catch {
+    // ignore
+  }
+  setDepartmentExtensionMap({});
+}
+
 function* fetchStaffListSaga(action: PayloadAction<StaffSearchParams>) {
   try {
+    yield call(loadDepartmentExtensionMap);
     const request = buildStaffListRequest(action.payload);
     const response: AxiosResponse<ApiResponse<StaffDto[]>> = yield call(fetchStaffListAPI, request);
     const list = assertApiSuccess(response.data) ?? [];
-    const employees = applyClientFilters(list.map(staffDtoToEmployee), action.payload);
+    const employees = applyClientFilters(
+      list.map((dto) => staffDtoToEmployee(dto)),
+      action.payload,
+    );
     yield put(fetchStaffListSuccess(employees));
   } catch (e) {
     yield put(fetchStaffListFailure(getErrorMessage(e, "직원 목록을 불러오지 못했습니다.")));
@@ -60,6 +84,7 @@ function* fetchStaffListSaga(action: PayloadAction<StaffSearchParams>) {
 
 function* fetchStaffDetailSaga(action: PayloadAction<string>) {
   try {
+    yield call(loadDepartmentExtensionMap);
     const response: AxiosResponse<ApiResponse<StaffDto>> = yield call(
       fetchStaffDetailAPI,
       action.payload,
