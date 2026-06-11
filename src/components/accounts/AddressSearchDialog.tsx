@@ -20,9 +20,11 @@ const AddressSearchDialog = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const onSelectRef = useRef(onSelect);
   const onCloseRef = useRef(onClose);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [embedHeight, setEmbedHeight] = useState(0);
+
+
 
   useEffect(() => {
     onSelectRef.current = onSelect;
