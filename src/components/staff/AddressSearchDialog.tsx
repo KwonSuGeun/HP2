@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { DaumPostcodeData } from "@/types/daumPostcode";
 import { embedDaumPostcode, loadDaumPostcodeScript } from "@/lib/daumPostcode";
-import styles from "./AccountPageStyles.module.css";
+import styles from "./StaffPageStyles.module.css";
 
 type AddressSearchDialogProps = {
   open: boolean;

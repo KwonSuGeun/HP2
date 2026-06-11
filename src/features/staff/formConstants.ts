@@ -1,4 +1,4 @@
-import type { EmployeeRegisterForm } from "./AccountTypes";
+﻿import type { StaffRegisterForm } from "./StaffTypes";
 
 /** 신규 직원 등록 폼 드롭다운 — HOSPITAL.STAFF_DEPARTMENT 기준 */
 export const DEPARTMENT_OPTIONS = [
@@ -65,14 +65,14 @@ export const DEPARTMENT_EXTENSION_BY_ID: Record<string, string> = {
 
 export const SEARCH_CRITERIA_OPTIONS = [
   { value: "name", label: "이름" },
-  { value: "employeeId", label: "사번" },
+  { value: "staffId", label: "사번" },
   { value: "department", label: "부서" },
   { value: "phoneNumber", label: "연락처" },
 ];
 
-export const DEFAULT_REGISTER_FORM: EmployeeRegisterForm = {
+export const DEFAULT_REGISTER_FORM: StaffRegisterForm = {
   profileImage: null,
-  employeeId: "",
+  staffId: "",
   password: "",
   name: "",
   birthDate: "",

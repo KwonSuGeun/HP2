@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { enrichStaffDto, fetchDepartmentExtensionMap } from "@/features/accounts/staffEnrichment";
-import type { StaffDto } from "@/features/accounts/AccountTypes";
+import { enrichStaffDto, fetchDepartmentExtensionMap } from "@/features/staff/staffEnrichment";
+import type { StaffDto } from "@/features/staff/StaffTypes";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8081";
 

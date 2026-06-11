@@ -1,6 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
+﻿import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import accountReducer from "@/features/accounts/AccountSlice";
+import staffReducer from "@/features/staff/StaffSlice";
 import navReducer from "@/features/nav/NavSlice";
 import sidebarReducer from "@/features/sidebar/SidebarSlice";
 import rootSaga from "./RootSaga";
@@ -11,7 +11,7 @@ export const store = configureStore({
   reducer: {
     nav: navReducer,
     sidebar: sidebarReducer,
-    account: accountReducer,
+    staff: staffReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(sagaMiddleware),

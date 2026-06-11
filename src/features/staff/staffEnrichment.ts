@@ -1,4 +1,4 @@
-import type { DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
+﻿import type { DepartmentDto, StaffRegisterForm, StaffDto } from "./StaffTypes";
 import { DEPARTMENT_EXTENSION_BY_ID, DEPARTMENT_OPTIONS } from "./formConstants";
 
 const ROLE_CODE_BY_TYPE: Record<string, string> = {
@@ -108,7 +108,7 @@ export function enrichStaffDto(
 
 const DETAIL_CACHE_PREFIX = "staffDetailCache:";
 
-type StaffDetailCache = Partial<EmployeeRegisterForm> & {
+type StaffDetailCache = Partial<StaffRegisterForm> & {
   staffHireDate?: string;
 };
 
@@ -122,7 +122,7 @@ export function readStaffDetailCache(staffId: string): StaffDetailCache | null {
   }
 }
 
-export function writeStaffDetailCache(staffId: string, form: EmployeeRegisterForm) {
+export function writeStaffDetailCache(staffId: string, form: StaffRegisterForm) {
   if (typeof window === "undefined") return;
   const payload: StaffDetailCache = {
     ...form,
@@ -149,7 +149,7 @@ export function applyStaffDetailCache(dto: StaffDto, cache: StaffDetailCache | n
   };
 }
 
-function buildStaffAddressFromForm(form: Partial<EmployeeRegisterForm>): string | undefined {
+function buildStaffAddressFromForm(form: Partial<StaffRegisterForm>): string | undefined {
   if (!form.zipCode?.trim() && !form.baseAddress?.trim()) return undefined;
   const base = `[${form.zipCode?.trim() ?? ""}] ${form.baseAddress?.trim() ?? ""}`.trim();
   if (!form.detailAddress?.trim()) return base;

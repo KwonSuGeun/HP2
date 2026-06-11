@@ -1,4 +1,4 @@
-import { all, call, put, takeLatest } from "redux-saga/effects";
+﻿import { all, call, put, takeLatest } from "redux-saga/effects";
 import axios, { AxiosResponse } from "axios";
 import { PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -21,11 +21,11 @@ import {
   registerStaffFailure,
   registerStaffRequest,
   registerStaffSuccess,
-} from "./AccountSlice";
+} from "./StaffSlice";
 import type { ApiResponse } from "@/lib/api/types/ApiResponse";
-import type { DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
-import { formToStaffRegisterRequest } from "./employeeUtils";
-import { staffDtoToEmployee } from "./staffMapper";
+import type { DepartmentDto, StaffRegisterForm, StaffDto } from "./StaffTypes";
+import { formToStaffRegisterRequest } from "./staffFormUtils";
+import { mapStaffDto } from "./staffMapper";
 import { setDepartmentExtensionMap, writeStaffDetailCache, removeStaffDetailCache } from "./staffEnrichment";
 import {
   applyClientFilters,
@@ -73,11 +73,11 @@ function* fetchStaffListSaga(action: PayloadAction<StaffSearchParams>) {
     const request = buildStaffListRequest(action.payload);
     const response: AxiosResponse<ApiResponse<StaffDto[]>> = yield call(fetchStaffListAPI, request);
     const list = assertApiSuccess(response.data) ?? [];
-    const employees = applyClientFilters(
-      list.map((dto) => staffDtoToEmployee(dto)),
+    const staffList = applyClientFilters(
+      list.map((dto) => mapStaffDto(dto)),
       action.payload,
     );
-    yield put(fetchStaffListSuccess(employees));
+    yield put(fetchStaffListSuccess(staffList));
   } catch (e) {
     yield put(fetchStaffListFailure(getErrorMessage(e, "직원 목록을 불러오지 못했습니다.")));
   }
@@ -90,20 +90,20 @@ function* fetchStaffDetailSaga(action: PayloadAction<string>) {
       fetchStaffDetailAPI,
       action.payload,
     );
-    yield put(fetchStaffDetailSuccess(staffDtoToEmployee(assertApiSuccess(response.data), { useCache: true })));
+    yield put(fetchStaffDetailSuccess(mapStaffDto(assertApiSuccess(response.data), { useCache: true })));
   } catch (e) {
     yield put(fetchStaffDetailFailure(getErrorMessage(e, "직원 상세 정보를 불러오지 못했습니다.")));
   }
 }
 
 function* registerStaffSaga(
-  action: PayloadAction<{ form: EmployeeRegisterForm; searchParams: StaffSearchParams }>,
+  action: PayloadAction<{ form: StaffRegisterForm; searchParams: StaffSearchParams }>,
 ) {
   try {
     const request = formToStaffRegisterRequest(action.payload.form);
     const response: AxiosResponse<ApiResponse<null>> = yield call(registerStaffAPI, request);
     assertApiSuccess(response.data);
-    writeStaffDetailCache(action.payload.form.employeeId.trim(), action.payload.form);
+    writeStaffDetailCache(action.payload.form.staffId.trim(), action.payload.form);
     yield put(registerStaffSuccess());
     yield put(fetchStaffListRequest(action.payload.searchParams));
   } catch (e) {
@@ -128,7 +128,7 @@ function* deleteStaffSaga(
   }
 }
 
-export function* watchAccountSaga() {
+export function* watchStaffSaga() {
   yield all([
     takeLatest(fetchStaffListRequest.type, fetchStaffListSaga),
     takeLatest(fetchStaffDetailRequest.type, fetchStaffDetailSaga),

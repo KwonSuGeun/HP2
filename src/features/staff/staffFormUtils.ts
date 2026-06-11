@@ -1,4 +1,4 @@
-import type { EmployeeRegisterForm, StaffRegisterRequest } from "./AccountTypes";
+import type { StaffRegisterForm, StaffRegisterRequest } from "./StaffTypes";
 import { DEPARTMENT_OPTIONS } from "./formConstants";
 
 function inferStaffType(departmentId: string): string {
@@ -40,12 +40,12 @@ export function normalizeKoreanMobilePhone(phone: string): string {
   return phone.replace(/\D/g, "");
 }
 
-export function formToStaffRegisterRequest(form: EmployeeRegisterForm): StaffRegisterRequest {
+export function formToStaffRegisterRequest(form: StaffRegisterForm): StaffRegisterRequest {
   const staffType = normalizeStaffType(inferStaffType(form.departmentId));
   const today = new Date().toISOString().slice(0, 10);
 
   return {
-    staffId: form.employeeId.trim(),
+    staffId: form.staffId.trim(),
     staffPassword: form.password,
     staffName: form.name.trim(),
     staffBirthDate: form.birthDate,
@@ -63,13 +63,13 @@ export function formToStaffRegisterRequest(form: EmployeeRegisterForm): StaffReg
   };
 }
 
-export function formatAddress(employee: {
+export function formatAddress(staff: {
   zipCode: string;
   baseAddress: string;
   detailAddress: string;
   staffAddress?: string;
 }): string {
-  const parts = [employee.zipCode, employee.baseAddress, employee.detailAddress].filter(Boolean);
+  const parts = [staff.zipCode, staff.baseAddress, staff.detailAddress].filter(Boolean);
   if (parts.length > 0) return parts.join(" ");
-  return employee.staffAddress?.trim() || "-";
+  return staff.staffAddress?.trim() || "-";
 }

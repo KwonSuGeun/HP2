@@ -1,8 +1,8 @@
-export type EmployeeStatus = "ACTIVE" | "LEAVE" | "RETIRED";
+﻿export type StaffWorkStatus = "ACTIVE" | "LEAVE" | "RETIRED";
 
-export type EmployeeSearchCriteria = "name" | "employeeId" | "department" | "phoneNumber";
+export type StaffSearchCriteria = "name" | "staffId" | "department" | "phoneNumber";
 
-export interface Employee {
+export interface Staff {
   id: string;
   profileImage: string | null;
   name: string;
@@ -15,9 +15,9 @@ export interface Employee {
   baseAddress: string;
   detailAddress: string;
   licenseNumber: string;
-  employeeId: string;
+  staffId: string;
   position: string;
-  status: EmployeeStatus;
+  status: StaffWorkStatus;
   staffType: string;
   staffRankCode: string;
   staffPositionCode: string;
@@ -28,9 +28,9 @@ export interface Employee {
   rawStaffStatus?: string;
 }
 
-export interface EmployeeRegisterForm {
+export interface StaffRegisterForm {
   profileImage: string | null;
-  employeeId: string;
+  staffId: string;
   password: string;
   name: string;
   birthDate: string;
@@ -44,7 +44,7 @@ export interface EmployeeRegisterForm {
 }
 
 export interface StaffSearchParams {
-  criteria: EmployeeSearchCriteria;
+  criteria: StaffSearchCriteria;
   keyword: string;
   jobRole: string;
   department: string;
@@ -56,9 +56,9 @@ export interface Status {
   success: boolean;
 }
 
-export interface AccountState {
-  employees: Employee[];
-  selectedEmployee: Employee | null;
+export interface StaffState {
+  staffList: Staff[];
+  selectedStaff: Staff | null;
   searchParams: StaffSearchParams;
   listStatus: Status;
   detailStatus: Status;

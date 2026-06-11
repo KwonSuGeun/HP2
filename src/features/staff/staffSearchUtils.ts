@@ -1,4 +1,4 @@
-import type { Employee, StaffListRequest, StaffSearchParams } from "./AccountTypes";
+﻿import type { Staff, StaffListRequest, StaffSearchParams } from "./StaffTypes";
 
 export type { StaffSearchParams };
 
@@ -11,7 +11,7 @@ export function buildStaffListRequest(params: StaffSearchParams): StaffListReque
 
   if (params.keyword.trim()) {
     const trimmed = params.keyword.trim();
-    if (params.criteria === "name" || params.criteria === "employeeId") {
+    if (params.criteria === "name" || params.criteria === "staffId") {
       request.keyword = trimmed;
     }
   }
@@ -19,8 +19,8 @@ export function buildStaffListRequest(params: StaffSearchParams): StaffListReque
   return request;
 }
 
-export function applyClientFilters(employees: Employee[], params: StaffSearchParams): Employee[] {
-  let result = employees;
+export function applyClientFilters(staffList: Staff[], params: StaffSearchParams): Staff[] {
+  let result = staffList;
 
   if (params.jobRole) {
     const roleAliases: Record<string, string[]> = {
@@ -31,16 +31,16 @@ export function applyClientFilters(employees: Employee[], params: StaffSearchPar
       MANAGER: ["MANAGER"],
     };
     const allowed = roleAliases[params.jobRole] ?? [params.jobRole];
-    result = result.filter((employee) => allowed.includes(employee.staffType));
+    result = result.filter((staff) => allowed.includes(staff.staffType));
   }
 
   if (params.keyword.trim()) {
     const lower = params.keyword.trim().toLowerCase();
     if (params.criteria === "department") {
-      result = result.filter((employee) => employee.department.toLowerCase().includes(lower));
+      result = result.filter((staff) => staff.department.toLowerCase().includes(lower));
     } else if (params.criteria === "phoneNumber") {
-      result = result.filter((employee) =>
-        employee.phoneNumber.replace(/\D/g, "").includes(lower.replace(/\D/g, "")),
+      result = result.filter((staff) =>
+        staff.phoneNumber.replace(/\D/g, "").includes(lower.replace(/\D/g, "")),
       );
     }
   }

@@ -1,4 +1,4 @@
-import type { Employee, EmployeeStatus, StaffDto } from "./AccountTypes";
+﻿import type { Staff, StaffWorkStatus, StaffDto } from "./StaffTypes";
 import { DEPARTMENT_OPTIONS, RANK_LABEL } from "./formConstants";
 import { resolveStaffProfileImage } from "./staffProfileImages";
 import {
@@ -19,7 +19,7 @@ const STAFF_TYPE_PREFIX: Record<string, string> = {
   ADM: "L.s.",
 };
 
-function toEmployeeStatus(status: string): EmployeeStatus {
+function toStaffWorkStatus(status: string): StaffWorkStatus {
   if (status === "LEAVE" || status === "휴직") return "LEAVE";
   if (status === "RETIRED" || status === "퇴직") return "RETIRED";
   return "ACTIVE";
@@ -57,7 +57,7 @@ function normalizeDto(dto: StaffDto, useCache: boolean): StaffDto {
   return enrichStaffDto(cached);
 }
 
-export function staffDtoToEmployee(dto: StaffDto, options?: { useCache?: boolean }): Employee {
+export function mapStaffDto(dto: StaffDto, options?: { useCache?: boolean }): Staff {
   const normalized = normalizeDto(dto, options?.useCache ?? false);
   const staffType = inferStaffType(normalized.staffDepartmentId, normalized.staffType);
   const staffRoleCode = inferStaffRoleCode(staffType, normalized.staffRoleCode);
@@ -77,9 +77,9 @@ export function staffDtoToEmployee(dto: StaffDto, options?: { useCache?: boolean
     detailAddress: address.detailAddress,
     staffAddress: normalized.staffAddress ?? "",
     licenseNumber: normalized.staffLicenseNo ?? "",
-    employeeId: normalized.staffId,
+    staffId: normalized.staffId,
     position: RANK_LABEL[normalized.staffRankCode] ?? normalized.staffRankCode,
-    status: toEmployeeStatus(normalized.staffStatus),
+    status: toStaffWorkStatus(normalized.staffStatus),
     staffType,
     staffRankCode: normalized.staffRankCode,
     staffPositionCode: normalized.staffPositionCode ?? normalized.staffRankCode ?? "",
