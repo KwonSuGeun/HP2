@@ -66,12 +66,6 @@ export interface AccountState {
   deleteStatus: Status;
 }
 
-export type ApiResponse<T> = {
-  code: string | number;
-  message: string;
-  data: T;
-};
-
 export interface DepartmentDto {
   departmentId: string;
   departmentName: string;
@@ -102,6 +96,7 @@ export interface StaffListRequest {
   staffRankCode?: string;
   status?: string;
   keyword?: string;
+  staffStatus?: string;
 }
 
 export interface StaffRegisterRequest {

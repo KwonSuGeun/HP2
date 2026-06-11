@@ -1,6 +1,6 @@
 import { api } from "@/lib/Axios";
 import { getStaffApiBase } from "@/lib/api/staffApiPaths";
-import type { ApiResponse } from "@/lib/api/ApiResponse";
+import type { ApiResponse } from "@/lib/api/types/ApiResponse";
 export type StaffItem = {
   staffId: string;
   staffName: string;

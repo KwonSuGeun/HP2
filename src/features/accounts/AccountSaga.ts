@@ -22,7 +22,8 @@ import {
   registerStaffRequest,
   registerStaffSuccess,
 } from "./AccountSlice";
-import type { ApiResponse, DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
+import type { ApiResponse } from "@/lib/api/types/ApiResponse";
+import type { DepartmentDto, EmployeeRegisterForm, StaffDto } from "./AccountTypes";
 import { formToStaffRegisterRequest } from "./employeeUtils";
 import { staffDtoToEmployee } from "./staffMapper";
 import { setDepartmentExtensionMap, writeStaffDetailCache, removeStaffDetailCache } from "./staffEnrichment";

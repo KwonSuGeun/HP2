@@ -1,6 +1,7 @@
 import { api } from "@/lib/Axios";
 import { getStaffApiBase } from "@/lib/api/staffApiPaths";
-import type { ApiResponse, DepartmentDto, StaffDto, StaffListRequest, StaffRegisterRequest } from "./AccountTypes";
+import type { ApiResponse } from "@/lib/api/types/ApiResponse";
+import type { DepartmentDto, StaffDto, StaffListRequest, StaffRegisterRequest } from "./AccountTypes";
 
 const staffBase = getStaffApiBase();
 

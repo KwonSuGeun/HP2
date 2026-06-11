@@ -1,5 +1,3 @@
-"use client";
-
 import Nav from "@/components/nav/Nav";
 import Sidebar from "@/components/sidebar/Sidebar";
 import styles from "./MainLayout.module.css";
