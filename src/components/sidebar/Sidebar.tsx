@@ -24,11 +24,18 @@ export default function Sidebar({ width = 240 }: SidebarProps) {
     dispatch(fetchSidebarRequest());
   }, [dispatch]);
 
-  React.useEffect(() => {
-    if (!items.length) return;
-    const autoOpenIds = getOpenIds(pathname, items);
-    setOpenIds((prev) => [...new Set([...prev, ...autoOpenIds])]);
-  }, [pathname, items]);
+  const autoOpenIds = React.useMemo(
+    () => (items.length ? getOpenIds(pathname, items) : []),
+    [pathname, items],
+  );
+  const autoOpenKey = `${pathname}:${autoOpenIds.join(",")}`;
+  const [prevAutoOpenKey, setPrevAutoOpenKey] = React.useState(autoOpenKey);
+  if (autoOpenKey !== prevAutoOpenKey) {
+    setPrevAutoOpenKey(autoOpenKey);
+    if (autoOpenIds.length > 0) {
+      setOpenIds((prev) => [...new Set([...prev, ...autoOpenIds])]);
+    }
+  }
 
   const toggleItem = (id: number) => {
     setOpenIds((prev) => (prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]));

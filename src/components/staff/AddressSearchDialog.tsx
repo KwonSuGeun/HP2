@@ -23,8 +23,16 @@ const AddressSearchDialog = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [embedHeight, setEmbedHeight] = useState(0);
+  const [prevOpen, setPrevOpen] = useState(open);
 
-
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setLoading(true);
+      setError(null);
+      setEmbedHeight(0);
+    }
+  }
 
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -32,32 +40,25 @@ const AddressSearchDialog = ({
   }, [onSelect, onClose]);
 
   useLayoutEffect(() => {
-    if (!open) {
-      setLoading(true);
-      setError(null);
-      setEmbedHeight(0);
-      return;
-    }
+    if (!open) return;
 
     let cancelled = false;
-    setLoading(true);
-    setError(null);
-    setEmbedHeight(0);
+    const container = containerRef.current;
 
     const mountEmbed = async () => {
       try {
         await loadDaumPostcodeScript();
         if (cancelled) return;
 
-        const container = containerRef.current;
-        if (!container) {
+        const embedContainer = containerRef.current;
+        if (!embedContainer) {
           setError("주소 검색 화면을 표시할 수 없습니다. 다시 시도해 주세요.");
           setLoading(false);
           return;
         }
 
         embedDaumPostcode(
-          container,
+          embedContainer,
           (data) => {
             onSelectRef.current(data);
             onCloseRef.current();
@@ -86,7 +87,7 @@ const AddressSearchDialog = ({
 
     return () => {
       cancelled = true;
-      containerRef.current?.replaceChildren();
+      container?.replaceChildren();
     };
   }, [open]);
 
